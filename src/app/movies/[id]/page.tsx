@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation"; // Correct way to get params
 import Image from "next/image";
-import TopBar from "@/components/TopBar";
 import { useMovies } from "@/context/MovieContext";
 import { Movie } from "@/types/movie";
 
@@ -27,7 +26,6 @@ export default function MovieDetail() {
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
-      <TopBar />
       <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6 flex flex-col md:flex-row gap-6">
         <div className="flex-shrink-0">
           <Image

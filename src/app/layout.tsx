@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MovieProvider>
-          {/* Layout handles TopBar & Page Structure */}
+          {/* Layout handles Navbar & Page Structure */}
           <Layout>{children}</Layout>
         </MovieProvider>
       </body>

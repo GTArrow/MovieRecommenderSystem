@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
-export default function TopBar() {
+export default function NavBar() {
   const pathname = usePathname(); // Get current route
   const router = useRouter(); // For navigating back
 

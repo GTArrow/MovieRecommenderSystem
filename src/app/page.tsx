@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import TopBar from "@/components/TopBar";
 import { useMovies } from "@/context/MovieContext";
+import HeroSection from "./home/components/HeroSection";
+import ScrollableMovieList from "./home/components/ScrollableMovieList";
 
 export default function Home() {
   const { movies, setMovies } = useMovies();
@@ -26,33 +25,12 @@ export default function Home() {
   }, [movies, setMovies]);
 
   return (
-    <main className="min-h-screen bg-gray-100">
-      <TopBar />
-      <section className="p-6 max-w-3xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-6 text-center">
-          Top 10 Popular Movies
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {movies.map((movie) => (
-            <Link key={movie.id} href={`/movies/${movie.id}`} prefetch={false}>
-              <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition cursor-pointer">
-                <Image
-                  src={movie.poster}
-                  alt={movie.title}
-                  width={500}
-                  height={750}
-                  className="rounded-md mb-2"
-                />
-                <h3 className="text-lg font-semibold">{movie.title}</h3>
-                <p className="text-sm text-gray-500">
-                  {movie.genres.join(", ")}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+    <main className="p-6">
+      <HeroSection />
+      <h2 className="text-2xl font-bold mt-6 mb-4">Top 10 Popular Movies</h2>
+      <div>
+        <ScrollableMovieList movies={movies} />
+      </div>
     </main>
   );
 }
