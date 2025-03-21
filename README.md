@@ -37,4 +37,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Additional Resources
 
+[React Context API](https://react.dev/reference/react/createContext)
 [Hero Icons](https://heroicons.com/)
