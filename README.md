@@ -37,5 +37,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Additional Resources
 
-[React Context API](https://react.dev/reference/react/createContext)
-[Hero Icons](https://heroicons.com/)
+- [React Context API](https://react.dev/reference/react/createContext)
+- [Lucide Icons](https://lucide.dev/icons/): The Shadcn UI Kit for Figma uses the Lucide icons as its main icon library.
+
+# Development Notes
+
+**How to solve UnknownAtRules issues**: Add Tailwind CSS VSCode extension and configure file association for '.css' file: [link](https://stackoverflow.com/questions/65247279/unknown-at-rule-tailwind-cssunknownatrules)

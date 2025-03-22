@@ -1,30 +1,31 @@
 "use client";
 
-import { Movie } from "@/types/movie";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Movie } from "@/types/movie";
 
-interface MovieCardProps {
-  movie: Movie;
-}
-
-export default function MovieCard({ movie }: MovieCardProps) {
+export default function MovieCard({ movie }: { movie: Movie }) {
   return (
-    <Link
-      href={`/movies/${movie.id}`}
-      className="w-60 rounded-lg shadow-md bg-white overflow-hidden"
-    >
-      <Image
-        src={movie.poster}
-        alt={movie.title}
-        width={240}
-        height={360}
-        className="object-cover"
-      />
-      <div className="p-3">
-        <h3 className="text-lg font-semibold">{movie.title}</h3>
-        <p className="text-sm text-gray-600">{movie.genres.join(", ")}</p>
-      </div>
+    <Link href={`/movies/${movie.id}`} className="hover:opacity-90 transition">
+      <Card className="w-[220px] overflow-hidden">
+        <Image
+          src={movie.poster}
+          alt={movie.title}
+          width={220}
+          height={330}
+          className="w-full h-[330px] object-cover"
+        />
+        <CardHeader className="p-4">
+          <CardTitle className="text-lg">{movie.title}</CardTitle>
+          <CardDescription>{movie.genres.join(", ")}</CardDescription>
+        </CardHeader>
+      </Card>
     </Link>
   );
 }

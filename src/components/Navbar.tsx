@@ -2,42 +2,43 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeft, UserCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function NavBar() {
-  const pathname = usePathname(); // Get current route
-  const router = useRouter(); // For navigating back
+  const pathname = usePathname();
+  const router = useRouter();
 
   const isMovieDetailPage = pathname.startsWith("/movies/");
 
   return (
     <header className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 bg-white shadow-md z-50">
-      {/* "Go Back" button on the left (only in movie detail pages) */}
       {isMovieDetailPage ? (
-        <button
+        <Button
+          variant="ghost"
           onClick={() => router.back()}
-          className="text-gray-700 hover:text-gray-900 transition cursor-pointer"
+          className="flex items-center"
         >
-          <ArrowLeftIcon className="w-6 h-6" />
-        </button>
+          <ArrowLeft />
+          Previous
+        </Button>
       ) : (
-        <div className="w-6" /> /* Placeholder to balance flex spacing */
+        <div className="w-[120px]" /> // Reserve space for symmetry
       )}
 
-      {/* Centered Clickable Title */}
+      {/* Centered Title */}
       <div className="absolute left-1/2 transform -translate-x-1/2">
-        <Link
-          href="/"
-          className="text-2xl font-bold text-gray-800 hover:text-gray-900 transition cursor-pointer"
-        >
-          MovieRecommender
+        <Link href="/" className="font-bold">
+          Movie Recommender
         </Link>
       </div>
 
-      {/* User Login Icon on the Right */}
-      <Link href="/login">
-        <UserCircleIcon className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900 transition" />
-      </Link>
+      <Button asChild variant="ghost" className="flex items-center">
+        <Link href="/login">
+          <UserCircle />
+          Login
+        </Link>
+      </Button>
     </header>
   );
 }
