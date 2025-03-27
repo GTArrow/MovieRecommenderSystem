@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  username       String   @unique
+  email          String   @unique
+  email_verified Boolean?
+  age            Int?
+  password       String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  provider_id    String?
+  provider_name  String?
+  access_token   String?
+
+  preferences    UserPreference[]
+  preferredGenres UserPreferredGenre[]
+  sessions       Session[]
+  searchHistory  SearchHistory[]
+}
+
+model UserPreference {
+  user_id       Int
+  liked_movie_id Int
+  liked_at      DateTime?
+  createdAt     DateTime @default(now())
+
+  user          User     @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, liked_movie_id])
+}
+
+model Session {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  session_token String   @unique
+  expires_at    DateTime
+
+  user          User     @relation(fields: [user_id], references: [id])
+}
+
+model UserPreferredGenre {
+  user_id       Int
+  genre_id      Int
+  createdAt     DateTime @default(now())
+
+  user          User     @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, genre_id])
+}
+
+model SearchHistory {
+  id              Int      @id @default(autoincrement())
+  user_id         Int
+  search_movie_id Int
+  searched_at     DateTime?
+
+  user            User     @relation(fields: [user_id], references: [id])
+}

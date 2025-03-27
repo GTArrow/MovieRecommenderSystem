@@ -20,6 +20,35 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Setup the database and Prisma schema connection
+
+Create a database if you don't have one yet
+
+```bash
+createdb moviedb
+```
+
+Replace the database URL with your PostgreSQL connection string in the env.local:
+
+```bash
+DATABASE_URL="postgresql://your_user:your_password@localhost:5432/moviedb"
+
+```
+
+Run the following to create tables in your PostgreSQL DB:
+
+```bash
+npx prisma db push
+
+```
+
+Optional: Generate Prisma Client (should happen automatically):
+
+```bash
+npx prisma generate
+
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
