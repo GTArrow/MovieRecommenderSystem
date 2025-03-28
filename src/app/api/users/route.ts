@@ -83,6 +83,21 @@ export async function POST(req: Request) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
+    // Check if username or email already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ username }, { email }],
+      },
+    });
+
+    if (existingUser) {
+      const conflictField =
+        existingUser.username === username ? "username" : "email";
+      return new NextResponse(`${conflictField} already exists`, {
+        status: 409,
+      });
+    }
+
     const newUser = await prisma.user.create({
       data: {
         username,
