@@ -38,7 +38,7 @@ DATABASE_URL="postgresql://your_user:your_password@localhost:5432/moviedb"
 Run the following to create tables in your PostgreSQL DB:
 
 ```bash
-npx prisma db push
+npx prisma moviedb push
 
 ```
 
