@@ -38,7 +38,7 @@ DATABASE_URL="postgresql://your_user:your_password@localhost:5432/moviedb"
 Run the following to create tables in your PostgreSQL DB:
 
 ```bash
-npx prisma moviedb push
+npx prisma db push
 
 ```
 
@@ -47,6 +47,26 @@ Optional: Generate Prisma Client (should happen automatically):
 ```bash
 npx prisma generate
 
+```
+
+Run the following to open up prisma studio:
+
+```bash
+npm run studio
+
+```
+
+Run the following to push any prisma udpate:
+
+```bash
+npm run prisma-push
+
+```
+
+Run the following to create schema required by Better Auth
+
+```bash
+npx @better-auth/cli generate --config src/lib/auth.ts
 ```
 
 ## Learn More

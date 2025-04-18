@@ -14,58 +14,95 @@ datasource db {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
-  username       String   @unique
+  id             String   @id @default(uuid())
   email          String   @unique
-  email_verified Boolean?
   age            Int?
-  password       String
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
-  provider_id    String?
-  provider_name  String?
-  access_token   String?
+  name           String
+  emailVerified  Boolean
+  image          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  preferences    UserPreference[]
+  preferences     UserPreference[]
   preferredGenres UserPreferredGenre[]
-  sessions       Session[]
-  searchHistory  SearchHistory[]
+  sessions        Session[]
+  searchHistory   SearchHistory[]
+  accounts        Account[]
+
+  @@map("user")
 }
 
 model UserPreference {
-  user_id       Int
+  userId        String
   liked_movie_id Int
-  createdAt     DateTime @default(now())
+  createdAt      DateTime @default(now())
 
-  user          User     @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([user_id, liked_movie_id])
+  @@id([userId, liked_movie_id])
 }
 
 model Session {
-  id            Int      @id @default(autoincrement())
-  user_id       Int
-  session_token String   @unique
-  expires_at    DateTime
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
 
-  user          User     @relation(fields: [user_id], references: [id])
+  @@unique([token])
+  @@map("session")
 }
 
 model UserPreferredGenre {
-  user_id       Int
-  genre_id      Int
-  createdAt     DateTime @default(now())
+  userId    String
+  genre_id  Int
+  createdAt DateTime @default(now())
 
-  user          User     @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([user_id, genre_id])
+  @@id([userId, genre_id])
 }
 
 model SearchHistory {
-  id              Int      @id @default(autoincrement())
-  user_id         Int
+  id              Int       @id @default(autoincrement())
+  userId          String
   search_movie_id Int
   searched_at     DateTime?
 
-  user            User     @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Account {
+  id                    String   @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+

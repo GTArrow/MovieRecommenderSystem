@@ -7,13 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "studio": "env -u DATABASE_URL $(cat .env.local | xargs) npx prisma studio"
+    "studio": "env -u DATABASE_URL $(cat .env.local | xargs) npx prisma studio",
+    "prisma-push": "env -u DATABASE_URL $(cat .env.local | xargs) npx prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-slot": "^1.1.2",
+    "@react-oauth/google": "^0.12.1",
+    "better-auth": "^1.2.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
@@ -21,6 +24,7 @@
     "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
     "tailwind-merge": "^3.0.2",
     "tw-animate-css": "^1.2.4"
   },

@@ -8,13 +8,13 @@ export async function GET() {
     const users: RawUser[] = await prisma.user.findMany({
       select: {
         id: true,
-        username: true,
         email: true,
-        email_verified: true,
+        emailVerified: true,
         age: true,
-        created_at: true,
-        updated_at: true,
-        provider_name: true,
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        image: true,
         preferences: {
           select: {
             liked_movie_id: true,
@@ -51,14 +51,12 @@ export async function GET() {
 }
 
 interface CreateUserPayload {
-  username: string;
   email: string;
   password: string;
   age?: number;
-  email_verified?: boolean;
-  provider_id?: string;
-  provider_name?: string;
-  access_token?: string;
+  emailVerified: boolean;
+  name: string;
+  image?: string;
   preferences?: number[];
   preferredGenres?: number[];
 }
@@ -67,32 +65,29 @@ export async function POST(req: Request) {
   try {
     const body: CreateUserPayload = await req.json();
     const {
-      username,
       email,
       password,
       age,
-      email_verified,
-      provider_id,
-      provider_name,
-      access_token,
+      emailVerified,
+      name,
+      image,
       preferences = [],
       preferredGenres = [],
     } = body;
 
-    if (!username || !email || !password) {
+    if (!name || !email || !password) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
     // Check if username or email already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [{ username }, { email }],
+        OR: [{ name }, { email }],
       },
     });
 
     if (existingUser) {
-      const conflictField =
-        existingUser.username === username ? "username" : "email";
+      const conflictField = existingUser.name === name ? "username" : "email";
       return new NextResponse(`${conflictField} already exists`, {
         status: 409,
       });
@@ -100,14 +95,11 @@ export async function POST(req: Request) {
 
     const newUser = await prisma.user.create({
       data: {
-        username,
+        name,
         email,
-        password,
         age,
-        email_verified,
-        provider_id,
-        provider_name,
-        access_token,
+        emailVerified,
+        image,
         preferences: {
           create: preferences.map((liked_movie_id) => ({ liked_movie_id })),
         },
