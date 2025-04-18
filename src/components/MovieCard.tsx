@@ -19,7 +19,7 @@ export default function MovieCard({ movie }: { movie: Movie }) {
           alt={movie.title}
           width={220}
           height={330}
-          className="rounded-md object-cover"
+          className="object-cover"
         />
         <CardHeader className="p-4">
           <CardTitle className="text-lg line-clamp-1 min-h-[28px]">
