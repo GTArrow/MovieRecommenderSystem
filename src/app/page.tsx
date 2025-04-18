@@ -25,12 +25,12 @@ export default function Home() {
   }, [movies, setMovies]);
 
   return (
-    <main className="p-6">
+    <div className="p-6">
       <HeroSection />
       <h2 className="text-2xl font-bold mt-6 mb-4">Top 10 Popular Movies</h2>
       <div>
         <ScrollableMovieList movies={movies} />
       </div>
-    </main>
+    </div>
   );
 }

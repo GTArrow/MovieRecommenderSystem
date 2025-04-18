@@ -38,7 +38,7 @@ DATABASE_URL="postgresql://your_user:your_password@localhost:5432/moviedb"
 Run the following to create tables in your PostgreSQL DB:
 
 ```bash
-npx prisma moviedb push
+npx prisma db push
 
 ```
 
@@ -72,3 +72,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # Development Notes
 
 **How to solve UnknownAtRules issues**: Add Tailwind CSS VSCode extension and configure file association for '.css' file: [link](https://stackoverflow.com/questions/65247279/unknown-at-rule-tailwind-cssunknownatrules)
+
+**Add Shadcn components**: `npx shadcn add textarea` (or you can add multiple components in a single command)

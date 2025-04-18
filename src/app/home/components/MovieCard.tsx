@@ -19,11 +19,15 @@ export default function MovieCard({ movie }: { movie: Movie }) {
           alt={movie.title}
           width={220}
           height={330}
-          className="w-full h-[330px] object-cover"
+          className="rounded-md object-cover"
         />
         <CardHeader className="p-4">
-          <CardTitle className="text-lg">{movie.title}</CardTitle>
-          <CardDescription>{movie.genres.join(", ")}</CardDescription>
+          <CardTitle className="text-lg line-clamp-1 min-h-[28px]">
+            {movie.title}
+          </CardTitle>
+          <CardDescription className="text-muted-foreground min-h-[48px] line-clamp-2">
+            {movie.genres.join(", ")}
+          </CardDescription>
         </CardHeader>
       </Card>
     </Link>
