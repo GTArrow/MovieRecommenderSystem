@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -10,32 +11,20 @@ export async function POST(req: Request) {
 
   const systemPrompt = `
     You are a helpful movie recommendation assistant.
-    You generate movie suggestions based on a user's taste and the current movie they are viewing.
-    Respond only in valid JSON format as requested.
+    Your task is to suggest TMDB movies based on the user's preferences and the movie they're currently viewing.
     `;
 
   const userPrompt = `
-    The user is currently viewing the movie:
-    
-    Title: ${currentMovie.title}
-    Genres: ${currentMovie.genres.join(", ")}
-    Description: ${currentMovie.description}
-    
-    The user likes these genres: ${likedGenres.join(", ")}.
-    They also liked these TMDB movie IDs: ${likedMovieIds.join(", ")}.
-    
-    Please recommend 5 movies that are either:
-    - similar to the current movie, or
-    - likely to be appreciated by the user based on their preferences.
-    
-    Return your response as a JSON array of 5 movie objects. Each movie object should include:
-    - id (TMDB ID as a string)
-    - title (string)
-    - genres (array of strings)
-    - description (short 1-2 sentence summary)
-    - poster (full poster URL like https://image.tmdb.org/t/p/w500/{poster_path})
-    
-    Do not include any explanation or formatting—return only the raw JSON array.
+    Current movie:
+    - Title: ${currentMovie.title}
+    - Genres: ${currentMovie.genres.join(", ")}
+    - Description: ${currentMovie.description}
+
+    User liked genres: ${likedGenres.join(", ")}
+    User liked TMDB movie IDs: ${likedMovieIds.join(", ")}
+
+    Return only a JSON array of 5 recommended TMDB movie IDs as strings.
+    Example: ["603", "157336", "447332", "244786", "274857"]
     `;
 
   try {
@@ -45,13 +34,12 @@ export async function POST(req: Request) {
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: 0.7,
+      temperature: 0.5,
     });
 
     let content = completion.choices[0].message.content || "";
     console.log("GPT-4o Response:\n", content);
 
-    // Clean up GPT output if wrapped in code block
     content = content.trim();
     if (content.startsWith("```json")) {
       content = content
@@ -62,11 +50,38 @@ export async function POST(req: Request) {
       content = content.replace(/^```/, "").replace(/```$/, "").trim();
     }
 
-    const parsed = JSON.parse(content);
+    const ids: string[] = JSON.parse(content);
 
-    return NextResponse.json(parsed);
+    const movies = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          const res = await fetch(
+            `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API_KEY}&language=en-US`
+          );
+          if (!res.ok)
+            throw new Error(`TMDB fetch failed with status ${res.status}`);
+
+          const movie = await res.json();
+          return {
+            id: movie.id.toString(),
+            title: movie.title,
+            description: movie.overview,
+            genres: movie.genres.map((g: any) => g.name),
+            poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+          };
+        } catch (err) {
+          console.warn(`Skipping TMDB movie ID ${id}:`, err.message);
+          return null; // fallback: exclude failed movie
+        }
+      })
+    );
+
+    // Filter out any nulls
+    const validMovies = movies.filter((movie) => movie !== null);
+
+    return NextResponse.json(validMovies);
   } catch (error) {
-    console.error("Error in GPT call:", error);
+    console.error("Error in GPT or TMDB call:", error);
     return NextResponse.json(
       { error: "Failed to get movie recommendations." },
       { status: 500 }
