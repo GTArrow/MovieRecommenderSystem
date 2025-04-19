@@ -1,5 +1,5 @@
 // lib/enrichUserData.ts
-import { fetchMovieById } from "@/lib/tmdb";
+import { fetchMovieById } from "@/app/api/movies/route";
 import { batchFetchGenresById } from "@/app/api/genres/route";
 
 export async function enrichPreferences(

@@ -49,7 +49,7 @@ const recommendations: Movie[] = [
 export default function Recommendation() {
   return (
     <div className="mt-12">
-      <h2 className="text-2xl font-semibold mb-4">Guess You May Like</h2>
+      <h2 className="text-2xl font-semibold mb-4">You Might Also Like</h2>
       <ScrollableMovieList movies={recommendations} />
     </div>
   );
