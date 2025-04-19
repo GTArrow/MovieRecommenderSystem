@@ -1,14 +1,13 @@
-// app/api/users/[id]/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { enrichPreferences, enrichPreferredGenres } from "@/lib/enrichUserData";
 import { RawUser, EnrichedUser } from "@/types/user";
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const userId = parseInt(params.id);
+  const userId = params.id;
 
-  if (isNaN(userId)) {
-    return new NextResponse("Invalid user ID", { status: 400 });
+  if (!userId) {
+    return new NextResponse("Missing user ID", { status: 400 });
   }
 
   try {
@@ -16,13 +15,13 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       where: { id: userId },
       select: {
         id: true,
-        username: true,
         email: true,
-        email_verified: true,
+        emailVerified: true,
         age: true,
-        created_at: true,
-        updated_at: true,
-        provider_name: true,
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        image: true,
         preferences: {
           select: {
             liked_movie_id: true,
@@ -42,7 +41,6 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       return new NextResponse("User not found", { status: 404 });
     }
 
-    // Enrich preferences with movie details
     const preferences = await enrichPreferences(user.preferences);
     const genres = await enrichPreferredGenres(user.preferredGenres);
 
@@ -60,14 +58,12 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
 }
 
 interface UpdateUserPayload {
-  username?: string;
   email?: string;
   password?: string;
   age?: number;
-  email_verified?: boolean;
-  provider_id?: string;
-  provider_name?: string;
-  access_token?: string;
+  emailVerified?: boolean;
+  name?: string;
+  image?: string;
   preferredGenres?: number[];
 }
 
@@ -75,51 +71,43 @@ export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const userId = parseInt(params.id);
+  const userId = params.id;
 
-  if (isNaN(userId)) {
-    return new NextResponse("Invalid user ID", { status: 400 });
+  if (!userId) {
+    return new NextResponse("Missing user ID", { status: 400 });
   }
 
   try {
     const body: UpdateUserPayload = await req.json();
     const {
-      username,
       email,
-      password,
       age,
-      email_verified,
-      provider_id,
-      provider_name,
-      access_token,
-      preferredGenres = [], // array of genre IDs
+      emailVerified,
+      name,
+      image,
+      preferredGenres = [],
     } = body;
 
-    // Step 1: Update basic user info
+    // Step 1: Update user data
     await prisma.user.update({
       where: { id: userId },
       data: {
-        username,
+        name,
         email,
-        password,
         age,
-        email_verified,
-        provider_id,
-        provider_name,
-        access_token,
+        emailVerified,
+        image,
       },
     });
 
     // Step 2: Replace preferredGenres
-    // Delete old ones
     await prisma.userPreferredGenre.deleteMany({
-      where: { user_id: userId },
+      where: { userId },
     });
 
-    // Create new ones
     await prisma.userPreferredGenre.createMany({
-      data: preferredGenres.map((genre_id: number) => ({
-        user_id: userId,
+      data: preferredGenres.map((genre_id) => ({
+        userId,
         genre_id,
       })),
     });

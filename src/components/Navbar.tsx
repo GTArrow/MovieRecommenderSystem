@@ -34,7 +34,7 @@ export default function NavBar() {
       </div>
 
       <Button asChild variant="ghost" className="flex items-center">
-        <Link href="/login">
+        <Link href="/signin">
           <UserCircle />
           Login
         </Link>
