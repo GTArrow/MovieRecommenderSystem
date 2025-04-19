@@ -4,39 +4,60 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { signInWithEmail} from "@/lib/auth-actions";
+import { signInWithEmail } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { GoogleSignInButton } from "@/components/GoogleBtn";
+import { authClient } from "@/lib/auth-client";
 
 export default function SignInPage() {
   const [message, setMessage] = useState("");
-   const [success, setSuccess] = useState(false);
-  const [isPending, startTransition] = useTransition();
-    const [email, setEmail] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const router = useRouter();
 
   async function handleSignIn(formData: FormData) {
+    setLoading(true);
     const result = await signInWithEmail(formData);
     setMessage(result.message);
     setSuccess(result.success);
 
     if (result.success) {
       setEmail("");
-      setTimeout(() => router.push("/"), 2000);
+      setTimeout(() => {
+        router.push("/profile");
+      }, 500);
+    } else {
+      setLoading(false);
+    }
+  }
+
+  async function handleGoogleLogin() {
+    setLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/profile",
+      });
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      setMessage("Google login failed.");
+      setSuccess(false);
+      setLoading(false);
     }
   }
 
   return (
-       <main className="min-h-screen flex items-center justify-center px-4">
-        <div className="w-full max-w-md min-w-[400px] space-y-6 bg-white p-8 rounded-xl shadow-md">
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md min-w-[400px] space-y-6 bg-white p-8 rounded-xl shadow-md">
         <h1 className="text-2xl font-semibold text-center">Login</h1>
 
-
-        <form action={(formData) => {
-    startTransition(() => handleSignIn(formData));
-  }} className="space-y-4">
+        <form
+          action={(formData) => {
+            handleSignIn(formData);
+          }}
+          className="space-y-4"
+        >
           <div className="space-y-2">
             <Label htmlFor="signin-email">Email</Label>
             <Input
@@ -47,6 +68,7 @@ export default function SignInPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -58,19 +80,28 @@ export default function SignInPage() {
               type="password"
               placeholder="••••••••"
               required
-              
+              disabled={loading}
             />
           </div>
 
-          <Button className="w-full" type="submit" disabled={isPending}>
-          {isPending ? "Logging in..." : "Login"}
+          <Button className="w-full" type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
-        <Button variant="outline" className="w-full" onClick={() => router.push("/signup")} disabled={isPending}>
-            Register
-          </Button>
 
-          <div className="relative my-4">
+        <p className="text-sm text-center">
+          Don’t have an account?{" "}
+          <button
+            type="button"
+            onClick={() => router.push("/signup")}
+            disabled={loading}
+            className="text-blue-600 hover:underline disabled:opacity-50"
+          >
+            Sign up here
+          </button>
+        </p>
+
+        <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t" />
           </div>
@@ -79,16 +110,17 @@ export default function SignInPage() {
           </div>
         </div>
 
-        {/* Google sign-in button */}
-          <GoogleSignInButton onSuccess={() => {
-            router.push("/");
-          }}
-          onError={(errMsg) => {
-            setMessage(errMsg);
-            setSuccess(false);
-          }}/>
+        <Button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 bg-[#4285F4] text-white hover:bg-[#357AE8]"
+        >
+          <FcGoogle className="w-5 h-5 bg-white rounded-full" />
+          Continue with Google
+        </Button>
 
-          {message && (
+        {message && (
           <p
             className={`text-center text-sm ${
               success ? "text-green-600" : "text-red-500"
