@@ -1,5 +1,6 @@
 "use client";
 
+import { LogOut as LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, UserCircle } from "lucide-react";
@@ -12,12 +13,7 @@ export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
   const isMovieDetailPage = pathname.startsWith("/movies/");
-  const {
-    data: session,
-    isPending,
-    error,
-    refetch,
-  } = authClient.useSession();
+  const { data: session, isPending, error, refetch } = authClient.useSession();
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -57,14 +53,20 @@ export default function NavBar() {
         <p className="text-sm text-red-500">Error loading session</p>
       ) : user ? (
         <div className="flex gap-2">
-          <Button asChild variant="ghost">
+          <Button asChild variant="ghost" className="flex items-center gap-2">
             <Link href="/profile">
-              <UserCircle className="mr-1" />
+              <UserCircle className="w-4 h-4" />
               Profile
             </Link>
           </Button>
+
           <form action={logout}>
-            <Button variant="ghost" type="submit">
+            <Button
+              variant="ghost"
+              type="submit"
+              className="flex items-center gap-2"
+            >
+              <LogOutIcon className="w-4 h-4" />
               Logout
             </Button>
           </form>
