@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import ScrollableMovieList from "@/components/ScrollableMovieList";
 import { useMovies } from "@/context/MovieContext";
 import HeroSection from "./home/components/HeroSection";
-import ScrollableMovieList from "./home/components/ScrollableMovieList";
 
 export default function Home() {
   const { movies, setMovies } = useMovies();
@@ -25,12 +25,10 @@ export default function Home() {
   }, [movies, setMovies]);
 
   return (
-    <main className="p-6">
+    <div className="p-6">
       <HeroSection />
       <h2 className="text-2xl font-bold mt-6 mb-4">Top 10 Popular Movies</h2>
-      <div>
-        <ScrollableMovieList movies={movies} />
-      </div>
-    </main>
+      <ScrollableMovieList movies={movies} />
+    </div>
   );
 }

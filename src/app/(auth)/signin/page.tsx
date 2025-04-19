@@ -48,88 +48,86 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md min-w-[400px] space-y-6 bg-white p-8 rounded-xl shadow-md">
-        <h1 className="text-2xl font-semibold text-center">Login</h1>
+    <div className="w-full max-w-md min-w-[400px] space-y-6 bg-white p-8 rounded-xl shadow-md">
+      <h1 className="text-2xl font-semibold text-center">Login</h1>
 
-        <form
-          action={(formData) => {
-            handleSignIn(formData);
-          }}
-          className="space-y-4"
-        >
-          <div className="space-y-2">
-            <Label htmlFor="signin-email">Email</Label>
-            <Input
-              id="signin-email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="signin-password">Password</Label>
-            <Input
-              id="signin-password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <Button className="w-full" type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-
-        <p className="text-sm text-center">
-          Don’t have an account?{" "}
-          <button
-            type="button"
-            onClick={() => router.push("/signup")}
+      <form
+        action={(formData) => {
+          handleSignIn(formData);
+        }}
+        className="space-y-4"
+      >
+        <div className="space-y-2">
+          <Label htmlFor="signin-email">Email</Label>
+          <Input
+            id="signin-email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className="text-blue-600 hover:underline disabled:opacity-50"
-          >
-            Sign up here
-          </button>
-        </p>
-
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-500">Or</span>
-          </div>
+          />
         </div>
 
-        <Button
-          type="button"
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-2 bg-[#4285F4] text-white hover:bg-[#357AE8]"
-        >
-          <FcGoogle className="w-5 h-5 bg-white rounded-full" />
-          Continue with Google
-        </Button>
+        <div className="space-y-2">
+          <Label htmlFor="signin-password">Password</Label>
+          <Input
+            id="signin-password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            disabled={loading}
+          />
+        </div>
 
-        {message && (
-          <p
-            className={`text-center text-sm ${
-              success ? "text-green-600" : "text-red-500"
-            }`}
-          >
-            {message}
-          </p>
-        )}
+        <Button className="w-full" type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </Button>
+      </form>
+
+      <p className="text-sm text-center">
+        Don’t have an account?{" "}
+        <button
+          type="button"
+          onClick={() => router.push("/signup")}
+          disabled={loading}
+          className="text-blue-600 hover:underline disabled:opacity-50"
+        >
+          Sign up here
+        </button>
+      </p>
+
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">Or</span>
+        </div>
       </div>
-    </main>
+
+      <Button
+        type="button"
+        onClick={handleGoogleLogin}
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-2 bg-[#4285F4] text-white hover:bg-[#357AE8]"
+      >
+        <FcGoogle className="w-5 h-5 bg-white rounded-full" />
+        Continue with Google
+      </Button>
+
+      {message && (
+        <p
+          className={`text-center text-sm ${
+            success ? "text-green-600" : "text-red-500"
+          }`}
+        >
+          {message}
+        </p>
+      )}
+    </div>
   );
 }

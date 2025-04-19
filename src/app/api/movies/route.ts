@@ -18,13 +18,15 @@ export async function GET() {
     }
 
     const data = await response.json();
-    const movies: Movie[] = data.results.slice(0, 10).map((movie: TMDBMovie): Movie => ({
-      id: movie.id.toString(),
-      title: movie.title,
-      genres: movie.genre_ids.map((id: number) => genreMap[id] || "Unknown"),
-      description: movie.overview,
-      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-    }));
+    const movies: Movie[] = data.results.slice(0, 10).map(
+      (movie: TMDBMovie): Movie => ({
+        id: movie.id.toString(),
+        title: movie.title,
+        genres: movie.genre_ids.map((id: number) => genreMap[id] || "Unknown"),
+        description: movie.overview,
+        poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      })
+    );
 
     return NextResponse.json(movies);
   } catch (error) {
@@ -35,11 +37,13 @@ export async function GET() {
   }
 }
 
-export async function fetchMovieById(movieId: number) {
+export async function fetchMovieById(movieId: string) {
   if (!TMDB_API_KEY) {
     throw new Error("TMDB API key is missing");
   }
-  const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&language=en-US`);
+  const res = await fetch(
+    `https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&language=en-US`
+  );
   if (!res.ok) {
     throw new Error("Failed to fetch movie details");
   }
