@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Layout from "@/components/Layout";
 import { MovieProvider } from "@/context/MovieContext";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +14,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
     <html lang="en">
       <body>
         <MovieProvider>
@@ -24,6 +22,5 @@ export default function RootLayout({
         </MovieProvider>
       </body>
     </html>
-    </GoogleOAuthProvider>
   );
 }
