@@ -5,13 +5,13 @@ import { Prisma } from "@prisma/client";
 export type RawUser = Prisma.UserGetPayload<{
   select: {
     id: true;
-    username: true;
     email: true;
-    email_verified: true;
+    emailVerified: true;
     age: true;
-    created_at: true;
-    updated_at: true;
-    provider_name: true;
+    createdAt: true;
+    updatedAt: true;
+    name: true;
+    image: true;
     preferences: {
       select: {
         liked_movie_id: true;

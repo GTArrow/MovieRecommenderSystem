@@ -49,6 +49,26 @@ npx prisma generate
 
 ```
 
+Run the following to open up prisma studio:
+
+```bash
+npm run studio
+
+```
+
+Run the following to push any prisma udpate:
+
+```bash
+npm run prisma-push
+
+```
+
+Run the following to create schema required by Better Auth
+
+```bash
+npx @better-auth/cli generate --config src/lib/auth.ts
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
