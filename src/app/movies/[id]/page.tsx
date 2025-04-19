@@ -1,20 +1,15 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ScrollableMovieList from "@/components/ScrollableMovieList";
 import { useMovies } from "@/context/MovieContext";
 import { MovieBasicInfo, Movie } from "@/types/movie";
+import MovieInfo from "./components/MovieInfo";
 
 function Loading() {
   return <p className="text-center mt-10">Loading movie...</p>;
 }
-
-const MovieInfo = dynamic<{ movie: Movie }>(
-  () => import("./components/MovieInfo"),
-  { suspense: true }
-);
 
 const mockLikedMovieIds = ["603", "157336", "27205"];
 const mockLikedGenres = ["Sci-Fi", "Comedy", "Action", "Drama"];
@@ -67,6 +62,7 @@ export default function MovieDetail() {
             currentMovie: movie,
             likedGenres: mockLikedGenres,
             likedMovieIds: mockLikedMovieIds,
+            count: 6,
           }),
         });
 
@@ -87,9 +83,7 @@ export default function MovieDetail() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <Suspense fallback={<Loading />}>
-        <MovieInfo movie={movie} />
-      </Suspense>
+      {!movie ? <Loading /> : <MovieInfo movie={movie} />}
 
       <div className="mt-12">
         <h2 className="text-2xl font-semibold mb-4">You Might Also Like</h2>

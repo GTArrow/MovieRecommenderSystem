@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import Layout from "@/components/Layout";
 import { MovieProvider } from "@/context/MovieContext";
 import "./globals.css";
@@ -19,6 +20,7 @@ export default function RootLayout({
         <MovieProvider>
           {/* Layout handles Navbar & Page Structure */}
           <Layout>{children}</Layout>
+          <Toaster richColors closeButton />
         </MovieProvider>
       </body>
     </html>
