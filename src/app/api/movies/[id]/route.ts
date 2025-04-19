@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Movie } from "@/types/movie"; // adjust path if needed
+import { Movie } from "@/types/movie";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params;
+  const { id } = params;
 
   if (!TMDB_API_KEY) {
     return NextResponse.json(
