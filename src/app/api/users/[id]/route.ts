@@ -3,8 +3,13 @@ import prisma from "@/lib/prisma";
 import { enrichPreferences, enrichPreferredGenres } from "@/lib/enrichUserData";
 import { RawUser, EnrichedUser } from "@/types/user";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const userId = params.id;
+export async function GET(
+  request: Request,
+  context: { params: { id: string } }
+) {
+  const { params } = context;
+  const { id } = await params;
+  const userId = id;
 
   if (!userId) {
     return new NextResponse("Missing user ID", { status: 400 });
@@ -68,25 +73,20 @@ interface UpdateUserPayload {
 }
 
 export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: { id: string } }
 ) {
-  const userId = params.id;
+  const { params } = context;
+  const { id } = await params;
+  const userId = id;
 
   if (!userId) {
     return new NextResponse("Missing user ID", { status: 400 });
   }
 
   try {
-    const body: UpdateUserPayload = await req.json();
-    const {
-      email,
-      age,
-      emailVerified,
-      name,
-      image,
-      preferredGenres = [],
-    } = body;
+    const body: UpdateUserPayload = await request.json();
+    const { email, age, name, image } = body;
 
     // Step 1: Update user data
     await prisma.user.update({
@@ -95,22 +95,21 @@ export async function PATCH(
         name,
         email,
         age,
-        emailVerified,
         image,
       },
     });
 
-    // Step 2: Replace preferredGenres
-    await prisma.userPreferredGenre.deleteMany({
-      where: { userId },
-    });
+    // // Step 2: Replace preferredGenres
+    // await prisma.userPreferredGenre.deleteMany({
+    //   where: { userId },
+    // });
 
-    await prisma.userPreferredGenre.createMany({
-      data: preferredGenres.map((genre_id) => ({
-        userId,
-        genre_id,
-      })),
-    });
+    // await prisma.userPreferredGenre.createMany({
+    //   data: preferredGenres.map((genre_id) => ({
+    //     userId,
+    //     genre_id,
+    //   })),
+    // });
 
     return NextResponse.json({ message: "User updated successfully" });
   } catch (error) {

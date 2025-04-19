@@ -50,72 +50,72 @@ export async function GET() {
   }
 }
 
-interface CreateUserPayload {
-  email: string;
-  password: string;
-  age?: number;
-  emailVerified: boolean;
-  name: string;
-  image?: string;
-  preferences?: number[];
-  preferredGenres?: number[];
-}
+// interface CreateUserPayload {
+//   email: string;
+//   password: string;
+//   age?: number;
+//   emailVerified: boolean;
+//   name: string;
+//   image?: string;
+//   preferences?: number[];
+//   preferredGenres?: number[];
+// }
 
-export async function POST(req: Request) {
-  try {
-    const body: CreateUserPayload = await req.json();
-    const {
-      email,
-      password,
-      age,
-      emailVerified,
-      name,
-      image,
-      preferences = [],
-      preferredGenres = [],
-    } = body;
+// export async function POST(req: Request) {
+//   try {
+//     const body: CreateUserPayload = await req.json();
+//     const {
+//       email,
+//       password,
+//       age,
+//       emailVerified,
+//       name,
+//       image,
+//       preferences = [],
+//       preferredGenres = [],
+//     } = body;
 
-    if (!name || !email || !password) {
-      return new NextResponse("Missing required fields", { status: 400 });
-    }
+//     if (!name || !email || !password) {
+//       return new NextResponse("Missing required fields", { status: 400 });
+//     }
 
-    // Check if username or email already exists
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [{ name }, { email }],
-      },
-    });
+//     // Check if username or email already exists
+//     const existingUser = await prisma.user.findFirst({
+//       where: {
+//         OR: [{ name }, { email }],
+//       },
+//     });
 
-    if (existingUser) {
-      const conflictField = existingUser.name === name ? "username" : "email";
-      return new NextResponse(`${conflictField} already exists`, {
-        status: 409,
-      });
-    }
+//     if (existingUser) {
+//       const conflictField = existingUser.name === name ? "username" : "email";
+//       return new NextResponse(`${conflictField} already exists`, {
+//         status: 409,
+//       });
+//     }
 
-    const newUser = await prisma.user.create({
-      data: {
-        name,
-        email,
-        age,
-        emailVerified,
-        image,
-        preferences: {
-          create: preferences.map((liked_movie_id) => ({ liked_movie_id })),
-        },
-        preferredGenres: {
-          create: preferredGenres.map((genre_id) => ({ genre_id })),
-        },
-      },
-      include: {
-        preferences: true,
-        preferredGenres: true,
-      },
-    });
+//     const newUser = await prisma.user.create({
+//       data: {
+//         name,
+//         email,
+//         age,
+//         emailVerified,
+//         image,
+//         preferences: {
+//           create: preferences.map((liked_movie_id) => ({ liked_movie_id })),
+//         },
+//         preferredGenres: {
+//           create: preferredGenres.map((genre_id) => ({ genre_id })),
+//         },
+//       },
+//       include: {
+//         preferences: true,
+//         preferredGenres: true,
+//       },
+//     });
 
-    return NextResponse.json(newUser, { status: 201 });
-  } catch (error) {
-    console.error("[POST /api/users]", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
-  }
-}
+//     return NextResponse.json(newUser, { status: 201 });
+//   } catch (error) {
+//     console.error("[POST /api/users]", error);
+//     return new NextResponse("Internal Server Error", { status: 500 });
+//   }
+// }
