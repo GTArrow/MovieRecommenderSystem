@@ -8,9 +8,9 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Movie } from "@/types/movie";
+import { MovieBasicInfo } from "@/types/movie";
 
-export default function MovieCard({ movie }: { movie: Movie }) {
+export default function MovieCard({ movie }: { movie: MovieBasicInfo }) {
   return (
     <Link href={`/movies/${movie.id}`} className="hover:opacity-90 transition">
       <Card className="w-[220px] overflow-hidden">

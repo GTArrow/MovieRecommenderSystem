@@ -1,7 +1,10 @@
-export interface Movie {
+export interface MovieBasicInfo {
   id: string;
   title: string;
   genres: string[];
-  description: string;
   poster: string;
+}
+
+export interface Movie extends MovieBasicInfo {
+  description: string;
 }

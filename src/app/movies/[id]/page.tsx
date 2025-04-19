@@ -1,10 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { useMovies } from "@/context/MovieContext";
-import { Movie } from "@/types/movie";
 import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
+import ScrollableMovieList from "@/components/ScrollableMovieList";
+import { useMovies } from "@/context/MovieContext";
+import { MovieBasicInfo, Movie } from "@/types/movie";
 
 function Loading() {
   return <p className="text-center mt-10">Loading movie...</p>;
@@ -15,20 +16,20 @@ const MovieInfo = dynamic<{ movie: Movie }>(
   { suspense: true }
 );
 
-const Recommendation = dynamic(() => import("./components/Recommendation"), {
-  suspense: true,
-});
+const mockLikedMovieIds = ["603", "157336", "27205"];
+const mockLikedGenres = ["Sci-Fi", "Comedy", "Action", "Drama"];
 
 export default function MovieDetail() {
   const params = useParams();
   const { movies } = useMovies();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState<MovieBasicInfo[]>([]);
+  const [loadingRecs, setLoadingRecs] = useState(true);
 
   useEffect(() => {
     async function loadMovie() {
-      setIsLoading(true); // start loading
-
+      setIsLoading(true);
       if (!params?.id) return;
 
       const movieId = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -47,11 +48,39 @@ export default function MovieDetail() {
       }
 
       setMovie(foundMovie || null);
-      setIsLoading(false); // done loading
+      setIsLoading(false);
     }
 
     loadMovie();
   }, [params, movies]);
+
+  useEffect(() => {
+    async function fetchRecommendations() {
+      if (!movie) return;
+      setLoadingRecs(true);
+
+      try {
+        const res = await fetch("/api/recommendations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            currentMovie: movie,
+            likedGenres: mockLikedGenres,
+            likedMovieIds: mockLikedMovieIds,
+          }),
+        });
+
+        const data = await res.json();
+        setRecommendations(data);
+      } catch (err) {
+        console.error("Failed to fetch recommendations", err);
+      } finally {
+        setLoadingRecs(false);
+      }
+    }
+
+    fetchRecommendations();
+  }, [movie]);
 
   if (isLoading) return <Loading />;
   if (!movie) return <p className="text-center mt-10">Movie not found</p>;
@@ -60,8 +89,16 @@ export default function MovieDetail() {
     <div className="max-w-5xl mx-auto px-6 py-10">
       <Suspense fallback={<Loading />}>
         <MovieInfo movie={movie} />
-        <Recommendation />
       </Suspense>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">You Might Also Like</h2>
+        {loadingRecs ? (
+          <p>Loading recommendations...</p>
+        ) : (
+          <ScrollableMovieList movies={recommendations} />
+        )}
+      </div>
     </div>
   );
 }
