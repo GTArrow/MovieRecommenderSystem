@@ -2,6 +2,11 @@
 import { Movie } from "./movie";
 import { Prisma } from "@prisma/client";
 import { UserPreferredGenre, UserPreference } from "@prisma/client";
+import { User } from "better-auth/types";
+
+export interface SessionUser extends User {
+  likedMovieIds?: number[];
+}
 
 export interface UserPreferenceMovieDetail extends UserPreference {
   movie: Movie | null;

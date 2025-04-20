@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Movie } from "@/types/movie";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { SessionUser } from "@/types/user";
 import {
   Dialog,
   DialogTrigger,
@@ -25,30 +26,32 @@ export default function MovieInfo({ movie }: { movie: Movie }) {
   const userId = session?.user?.id;
   const movieId = parseInt(movie.id);
   const endpoint = `/api/users/${userId}/preferences`;
-  //const likedMovieIds = session?.user.likedMovieIds ?? [];
+  const user = session?.user as SessionUser;
+  //console.log("User", user);
+  const likedMovieIds = user?.likedMovieIds ?? [];
 
   const handleAddToWatchlist = () => {
     toast("Movie added to watchlist (Upcoming feature)");
   };
 
-  useEffect(() => {
-    const fetchLikedStatus = async () => {
-      if (!userId) return;
-      try {
-        const res = await fetch(endpoint);
-        if (!res.ok) throw new Error("Failed to fetch liked movies");
-        const likedIds: number[] = await res.json();
-        setLiked(likedIds.includes(movieId));
-      } catch (err) {
-        console.error("Error loading liked status", err);
-      }
-    };
-    fetchLikedStatus();
-  }, [userId, movieId]);
-
   // useEffect(() => {
-  //   setLiked(likedMovieIds.includes(movieId));
-  // }, [likedMovieIds, movieId]);
+  //   const fetchLikedStatus = async () => {
+  //     if (!userId) return;
+  //     try {
+  //       const res = await fetch(endpoint);
+  //       if (!res.ok) throw new Error("Failed to fetch liked movies");
+  //       const likedIds: number[] = await res.json();
+  //       setLiked(likedIds.includes(movieId));
+  //     } catch (err) {
+  //       console.error("Error loading liked status", err);
+  //     }
+  //   };
+  //   fetchLikedStatus();
+  // }, [userId, movieId]);
+
+  useEffect(() => {
+    setLiked(likedMovieIds.includes(movieId));
+  }, [likedMovieIds, movieId]);
 
   const handleToggleLike = async () => {
     if (!userId) {
