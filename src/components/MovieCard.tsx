@@ -10,26 +10,39 @@ import {
 } from "@/components/ui/card";
 import { MovieBasicInfo } from "@/types/movie";
 
-export default function MovieCard({ movie }: { movie: MovieBasicInfo }) {
-  return (
+interface MovieCardProps {
+  movie: MovieBasicInfo;
+  onClick?: () => void; // optional toggle behavior
+}
+
+export default function MovieCard({ movie, onClick }: MovieCardProps) {
+  const content = (
+    <Card className="w-[220px] overflow-hidden cursor-pointer">
+      <Image
+        src={movie.poster}
+        alt={movie.title}
+        width={220}
+        height={330}
+        className="object-cover"
+      />
+      <CardHeader className="p-4">
+        <CardTitle className="text-lg line-clamp-1 min-h-[28px]">
+          {movie.title}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground min-h-[48px] line-clamp-2">
+          {movie.genres.join(", ")}
+        </CardDescription>
+      </CardHeader>
+    </Card>
+  );
+
+  return onClick ? (
+    <div onClick={onClick} className="hover:opacity-90 transition">
+      {content}
+    </div>
+  ) : (
     <Link href={`/movies/${movie.id}`} className="hover:opacity-90 transition">
-      <Card className="w-[220px] overflow-hidden">
-        <Image
-          src={movie.poster}
-          alt={movie.title}
-          width={220}
-          height={330}
-          className="object-cover"
-        />
-        <CardHeader className="p-4">
-          <CardTitle className="text-lg line-clamp-1 min-h-[28px]">
-            {movie.title}
-          </CardTitle>
-          <CardDescription className="text-muted-foreground min-h-[48px] line-clamp-2">
-            {movie.genres.join(", ")}
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      {content}
     </Link>
   );
 }

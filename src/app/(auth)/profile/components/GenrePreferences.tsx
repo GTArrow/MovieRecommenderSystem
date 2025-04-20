@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,44 +11,76 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { UserPreferredGenreDetail } from "@/types/user";
+import { Genre } from "@/types/genre";
 
-const allGenres = [
-  "Action",
-  "Adventure",
-  "Animation",
-  "Comedy",
-  "Crime",
-  "Drama",
-  "Fantasy",
-  "Horror",
-  "Mystery",
-  "Romance",
-  "Sci-Fi",
-  "Thriller",
-];
+export default function GenrePreferences({
+  genres,
+  allGenres,
+  userId,
+  onUpdate,
+}: {
+  genres: UserPreferredGenreDetail[];
+  allGenres: Genre[];
+  userId: string;
+  onUpdate?: (updated: UserPreferredGenreDetail[]) => void;
+}) {
+  const [selectedGenres, setSelectedGenres] = useState<number[]>(
+    genres.map((g) => g.genre_id)
+  );
+  const [tempGenres, setTempGenres] = useState<number[]>(selectedGenres);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-export default function GenrePreferences() {
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([
-    "Drama",
-    "Sci-Fi",
-  ]);
-  const [tempGenres, setTempGenres] = useState<string[]>(selectedGenres);
-  const [dialogOpen, setDialogOpen] = useState(false); // 👈 Dialog open state
 
-  const toggleGenre = (genre: string) => {
+  const toggleGenre = (genreId: number) => {
     setTempGenres((prev) =>
-      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+      prev.includes(genreId)
+        ? prev.filter((id) => id !== genreId)
+        : [...prev, genreId]
     );
   };
 
-  const applyChanges = () => {
-    setSelectedGenres(tempGenres);
-    setDialogOpen(false); // 👈 Close dialog
+  const applyChanges = async () => {
+    try {
+      const res = await fetch(`/api/users/${userId}/preferred-genres`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ genre_ids: tempGenres }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update preferred genres");
+
+      setSelectedGenres(tempGenres);
+      setDialogOpen(false);
+
+      if (onUpdate) {
+        // Map back to full UserPreferredGenreDetail
+        const updated: UserPreferredGenreDetail[] = tempGenres.map((id) => {
+          const match = allGenres.find((g) => g.id === id);
+          return {
+            userId,
+            genre_id: id,
+            name: match?.name ?? `Genre ${id}`,
+            createdAt: new Date(),
+          };
+        });
+
+        onUpdate(updated);
+      }
+    } catch (err) {
+      console.error("Failed to update genres", err);
+    }
   };
 
   const cancelChanges = () => {
-    setTempGenres(selectedGenres); // Reset edits
-    setDialogOpen(false); // 👈 Close dialog
+    setTempGenres(selectedGenres);
+    setDialogOpen(false);
+  };
+
+  const getGenreName = (id: number) => {
+    return allGenres.find((g) => g.id === id)?.name || `Genre ${id}`;
   };
 
   return (
@@ -66,14 +98,14 @@ export default function GenrePreferences() {
             <div className="grid grid-cols-2 gap-3 pt-4">
               {allGenres.map((genre) => (
                 <label
-                  key={genre}
+                  key={genre.id}
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <Checkbox
-                    checked={tempGenres.includes(genre)}
-                    onCheckedChange={() => toggleGenre(genre)}
+                    checked={tempGenres.includes(genre.id)}
+                    onCheckedChange={() => toggleGenre(genre.id)}
                   />
-                  <span>{genre}</span>
+                  <span>{genre.name}</span>
                 </label>
               ))}
             </div>
@@ -89,12 +121,12 @@ export default function GenrePreferences() {
 
       <div className="flex flex-wrap gap-2">
         {selectedGenres.length > 0 ? (
-          selectedGenres.map((genre) => (
+          selectedGenres.map((id) => (
             <span
-              key={genre}
+              key={id}
               className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
             >
-              {genre}
+              {getGenreName(id)}
             </span>
           ))
         ) : (

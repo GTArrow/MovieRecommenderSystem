@@ -122,7 +122,7 @@ async function fetchTMDBMovies(ids: string[]) {
           genres: movie.genres.map((g: any) => g.name),
           poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
         };
-      } catch (err) {
+      } catch (err: any) {
         console.warn(`Skipping TMDB movie ID ${id}:`, err.message);
         return null;
       }

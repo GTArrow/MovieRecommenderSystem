@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { createAvatar } from "@dicebear/core";
 import { adventurer } from "@dicebear/collection";
+import { updatePortrait } from "@/lib/auth-actions";
+import { EnrichedUser } from "@/types/user";
 
 const avatarNames = ["Oliver", "Lucas", "Nova", "Chloe", "Leo"];
 const avatarOptions = avatarNames.map((name) =>
@@ -21,9 +23,11 @@ const avatarOptions = avatarNames.map((name) =>
 export default function AvatarSelector({
   selectedAvatar,
   setSelectedAvatar,
+  user
 }: {
   selectedAvatar: string;
   setSelectedAvatar: (avatar: string) => void;
+  user:EnrichedUser
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -67,9 +71,10 @@ export default function AvatarSelector({
                       ? "border-blue-500"
                       : "border-transparent"
                   )}
-                  onClick={() => {
+                  onClick={async () => {
                     setSelectedAvatar(url);
                     setIsOpen(false);
+                    await updatePortrait(url);
                   }}
                 >
                   <Image

@@ -5,6 +5,9 @@ import Image from "next/image";
 import { Movie } from "@/types/movie";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollBar } from "@/components/ui/scroll-area";
+import MovieCard from "@/components/MovieCard";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import MovieListContainer from "./MovieListContainer";
+import { UserPreferenceMovieDetail } from "@/types/user";
 
 // Sample movie data
 const dummyMovies: Movie[] = [
@@ -21,7 +25,7 @@ const dummyMovies: Movie[] = [
     title: "Interstellar",
     genres: ["Sci-Fi", "Drama"],
     description: "A team of explorers travel through a wormhole in space.",
-    poster: "https://image.tmdb.org/t/p/w200/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg",
+    poster: "https://image.tmdb.org/t/p/w500/xUkUZ8eOnrOnnJAfusZUqKYZiDu.jpg",
   },
   {
     id: "2",
@@ -40,18 +44,17 @@ const dummyMovies: Movie[] = [
   },
 ];
 
-export default function MoviePreferences() {
-  const [likedMovies, setLikedMovies] = useState<Movie[]>([dummyMovies[0]]);
+export default function MoviePreferences({movies}: {movies: UserPreferenceMovieDetail[]}) {
+  const [likedMovies, setLikedMovies] = useState<UserPreferenceMovieDetail[]>(movies);
   const [watchlist] = useState<Movie[]>([dummyMovies[1]]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const toggleLiked = (movie: Movie) => {
-    const exists = likedMovies.find((m) => m.id === movie.id);
-    if (exists) {
-      setLikedMovies(likedMovies.filter((m) => m.id !== movie.id));
-    } else {
-      setLikedMovies([...likedMovies, movie]);
-    }
+  const toggleLiked = (movieId: string) => {
+    setLikedMovies((prev) =>
+      prev.some((m) => m.movie?.id === movieId)
+        ? prev.filter((m) => m.movie?.id !== movieId)
+        : [...prev, movies.find((m) => m.movie?.id === movieId)!]
+    );
   };
 
   return (
@@ -68,28 +71,21 @@ export default function MoviePreferences() {
               <DialogHeader>
                 <DialogTitle>Select Your Liked Movies</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                {dummyMovies.map((movie) => (
-                  <button
-                    key={movie.id}
-                    className={`flex gap-2 items-center border p-2 rounded ${
-                      likedMovies.some((m) => m.id === movie.id)
-                        ? "border-blue-500"
-                        : "border-gray-200"
-                    }`}
-                    onClick={() => toggleLiked(movie)}
-                  >
-                    <Image
-                      src={movie.poster}
-                      alt={movie.title}
-                      width={40}
-                      height={60}
-                      className="rounded"
-                    />
-                    <p className="text-sm font-medium">{movie.title}</p>
-                  </button>
-                ))}
-              </div>
+              <ScrollArea className="w-full">
+                <div className="flex w-max space-x-4 p-2">
+                  {likedMovies.map((pref) =>
+                    pref.movie ? (
+                      <MovieCard
+                        key={pref.movie.id}
+                        movie={pref.movie}
+                        onClick={() => toggleLiked(pref.movie!.id)}
+                      />
+                    ) : null
+                  )}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+
               <div className="flex justify-end pt-4">
                 <Button onClick={() => setDialogOpen(false)}>Save</Button>
               </div>
@@ -100,7 +96,20 @@ export default function MoviePreferences() {
         {likedMovies.length === 0 ? (
           <p className="text-muted-foreground">No liked movies yet.</p>
         ) : (
-          <MovieListContainer movies={likedMovies} />
+            <div className="flex w-max space-x-4 p-2">
+              {likedMovies.map((pref) =>
+                pref.movie ? (
+                  <Image
+                    key={pref.movie.id}
+                    src={pref.movie.poster}
+                    alt={pref.movie.title}
+                    width={100}
+                    height={150}
+                    className="rounded shadow"
+                  />
+                ) : null
+              )}
+            </div>
         )}
       </Card>
 

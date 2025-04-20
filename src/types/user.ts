@@ -1,6 +1,15 @@
 // types/user.ts
 import { Movie } from "./movie";
 import { Prisma } from "@prisma/client";
+import { UserPreferredGenre, UserPreference } from "@prisma/client";
+
+export interface UserPreferenceMovieDetail extends UserPreference {
+  movie: Movie | null;
+}
+
+export interface UserPreferredGenreDetail extends UserPreferredGenre {
+  name: string;
+}
 
 export type RawUser = Prisma.UserGetPayload<{
   select: {
@@ -14,12 +23,14 @@ export type RawUser = Prisma.UserGetPayload<{
     image: true;
     preferences: {
       select: {
+        userId: true;
         liked_movie_id: true;
         createdAt: true;
       };
     };
     preferredGenres: {
       select: {
+        userId: true;
         genre_id: true;
         createdAt: true;
       };
@@ -28,14 +39,6 @@ export type RawUser = Prisma.UserGetPayload<{
 }>;
 
 export type EnrichedUser = Omit<RawUser, "preferences" | "preferredGenres"> & {
-  preferences: {
-    liked_movie_id: number;
-    createdAt: Date;
-    movie: Movie | null;
-  }[];
-  preferredGenres: {
-    genre_id: number;
-    name: string;
-    createdAt: Date;
-  }[];
+  preferences: UserPreferenceMovieDetail[];
+  preferredGenres: UserPreferredGenreDetail[];
 };

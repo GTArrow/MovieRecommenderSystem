@@ -1,10 +1,14 @@
 // lib/enrichUserData.ts
 import { fetchMovieById } from "@/app/api/movies/route";
 import { batchFetchGenresById } from "@/app/api/genres/route";
+import {
+  UserPreferenceMovieDetail,
+  UserPreferredGenreDetail,
+} from "@/types/user";
 
 export async function enrichPreferences(
-  preferences: { liked_movie_id: number; createdAt: Date }[]
-) {
+  preferences: { userId: string; liked_movie_id: number; createdAt: Date }[]
+): Promise<UserPreferenceMovieDetail[]> {
   return Promise.all(
     preferences.map(async (pref) => {
       let movie = null;
@@ -14,27 +18,32 @@ export async function enrichPreferences(
         console.error(`Error fetching movie ${pref.liked_movie_id}:`, error);
       }
 
-      return {
+      const enriched: UserPreferenceMovieDetail = {
+        userId: pref.userId,
         liked_movie_id: pref.liked_movie_id,
         createdAt: pref.createdAt,
         movie,
       };
+
+      return enriched;
     })
   );
 }
 
 export async function enrichPreferredGenres(
-  preferredGenres: { genre_id: number; createdAt: Date }[]
+  preferredGenres: { userId: string; genre_id: number; createdAt: Date }[]
 ) {
   const genreIds = preferredGenres.map((g) => g.genre_id);
   const genreDetails = await batchFetchGenresById(genreIds);
 
   return preferredGenres.map((pg) => {
     const match = genreDetails.find((g) => g.id === pg.genre_id);
-    return {
+    const enriched: UserPreferredGenreDetail = {
+      userId: pg.userId,
       genre_id: pg.genre_id,
       name: match?.name || "Unknown",
       createdAt: pg.createdAt,
     };
+    return enriched;
   });
 }
