@@ -14,12 +14,23 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Heart, HeartIcon } from "lucide-react"; // Lucide icons
 
 export default function MovieInfo({ movie }: { movie: Movie }) {
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   const handleAddToWatchlist = () => {
-    toast.success("Movie added to watchlist (Upcoming feature)");
+    toast("Movie added to watchlist (Upcoming feature)");
+  };
+
+  const handleToggleLike = () => {
+    setLiked((prev) => !prev);
+    toast(
+      liked
+        ? "Removed from liked movies"
+        : "Movie added to liked list (Upcoming feature)"
+    );
   };
 
   return (
@@ -36,7 +47,22 @@ export default function MovieInfo({ movie }: { movie: Movie }) {
 
       <div className="flex flex-col justify-between space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">{movie.title}</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-3xl font-bold">{movie.title}</h1>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={handleToggleLike}
+              aria-label="Like movie"
+            >
+              {liked ? (
+                <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+              ) : (
+                <HeartIcon className="w-8 h-8" />
+              )}
+            </Button>
+          </div>
+
           <div className="flex flex-wrap gap-2 mt-3">
             {movie.genres.map((genre) => (
               <Badge key={genre} variant="outline">
