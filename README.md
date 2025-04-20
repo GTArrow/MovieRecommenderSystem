@@ -1,96 +1,397 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Movie Recommender System - Final Report
 
-## Getting Started
+## Team Information
 
-First, run the development server:
+- Member 1: Yixuan Liu (1003238793), [yixuann.liu@mail.utoronto.ca](mailto:yixuann.liu@mail.utoronto.ca)
+- Member 2: Yijun Chen (1003045518), [liloliver.chen@mail.utoronto.ca](mailto:liloliver.chen@mail.utoronto.ca)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Video Demo
+
+Here’s the video demo link:
+
+## Motivation
+
+Finding the right movie to watch can be overwhelming with the vast number of options available on streaming platforms. Traditional recommendation systems rely on past interactions, making them ineffective for new users who lack viewing history (cold-start problem) or when data is sparse. As a result, users often receive generic suggestions that don’t match their tastes, leading to frustration and decision fatigue.
+
+This project addresses these issues by building a **web-based movie recommendation system** that integrates a **Large Language Model (LLM) via API calls** to provide intelligent, personalized suggestions. Unlike traditional methods, LLMs can infer user preferences from minimal input, making recommendations more flexible and adaptive. By allowing users to **set their preferred genres and receive similar movie suggestions**, the platform makes discovery more engaging and intuitive.
+
+Our target users are **movie lovers seeking personalized recommendations** without needing a long watch history. Whether they’re casual viewers looking for quick suggestions or users exploring niche genres, this system provides an easy-to-use interface to register, set preferences, and explore tailored recommendations.
+
+## Objectives
+
+This project aims to develop a **web-based movie recommendation system** that offers personalized movie suggestions using LLM-powered recommendations and API-driven movie metadata. Users will be able to register, set preferences, browse movie details, and discover new content through an intuitive interface similar to streaming platforms like Netflix.
+
+The system integrates **secure user authentication**, **personalized recommendations via the GPT-4o API**, and **movie data from the TMDB API**, creating a seamless and engaging experience tailored to individual tastes.
+
+## Features
+
+### 1. User Authentication
+
+Access to personalized content is gated by secure authentication. Users must **sign up**, **log in**, or **log out** through a flexible authentication system built with **BetterAuth**, which supports both traditional email/password credentials and Google OAuth.
+
+- **Sign Up**: New users register by providing a username, email, password, and optionally their age. All fields are validated to ensure proper formatting and data integrity.
+- **Sign In**: Returning users log in using either email/password or their Google account.
+- **Log Out**: Authenticated users can securely log out to end their session.
+
+### 2. User Profile Management
+
+Once users are authenticated, they are directed to a personalized **profile page** that serves as a central hub for managing their account and preferences. The page is organized with a sidebar containing three sections:
+
+- **Personal Information**
+- **Genre Preferences**
+- **Movie Preferences**
+
+Users can:
+
+- View and update their profile information, including uploading a custom avatar (next step: persist to database).
+- Set or modify their preferred genres and movies.
+- View their liked movies and watch history (next step: support editing/updating history).
+
+### 3. Homepage: Search & Recommendations
+
+The homepage serves as the central hub for content discovery, designed to be both dynamic and personalized. It includes:
+
+- An **interactive search bar** powered by the **TMDB Search API**, allowing users to search movies by title. The input is debounced to limit unnecessary API calls, and results are displayed in a dropdown menu. Clicking on any result instantly navigates to the corresponding movie detail page, creating a smooth and responsive user experience.
+- A **Top 10 recent popular movies** list showcasing trending titles, helping users stay updated with what’s hot.
+- **Personalized movie recommendations** generated through the **GPT-4o API**, tailored to each user’s genre and movie preferences. These recommendations adapt based on user interactions and serve as the core feature for individualized content discovery.
+
+### 4. Movie Detail Page
+
+Each movie detail page displays:
+
+- The poster, title, genres, and description of the selected movie.
+- UI elements for:
+  - **Like** (mark as favorite)
+  - **Add to Watchlist** (track viewing history)
+  - **Share** (popup dialog with sharing options)
+
+While these buttons currently serve as UI placeholders (with functionality planned as next steps), they are built for future interactivity.
+
+The page also includes a **Related Movies** section: “You Might Also Like”. Related movies are generated by combining **GPT-4o** and **TMDB API**:
+
+- The current movie’s details and user preferences are sent to GPT-4o.
+- GPT responds with a list of TMDB movie IDs.
+- These IDs are then used to fetch full movie data via TMDB’s endpoint.
+
+### Note
+
+Users can access the homepage and movie detail pages **without logging in**. However, in this case, the recommendations shown will be **general (zero-shot) suggestions** generated by GPT-4o, rather than personalized results based on the user's preferences.
+
+### Summary
+
+This project delivers a personalized, web-based movie recommendation system with a focus on usability and intelligent content discovery. The application meets the course requirements by incorporating two advanced features: **secure authentication and authorization**, and **integration with external APIs** (TMDB and GPT-4o). Together, these capabilities power a seamless, Netflix-like user experience that allows users to register, manage profiles, search and browse movies, and receive tailored recommendations.
+
+## **Technical Implementation**
+
+### Technical Stack & Architecture
+
+- **Framework**: Next.js with TypeScript for full-stack development and routing
+- **UI & Styling**: Tailwind CSS and shadcn/ui for responsive and consistent design
+- **State Management**: React Context API to manage user state and preferences
+- **API Handling**:
+  - API Routes for fetching movie data
+  - Server Actions for user interactions and DB updates
+- **Database & ORM**: PostgreSQL with Prisma for relational data modeling and access
+- **Authentication**: BetterAuth supports OAuth (Google) and email/password login with session handling
+- **External APIs**:
+  - [TMDB API](https://developer.themoviedb.org/docs/getting-started) for movie metadata
+  - [GPT-4o API](https://platform.openai.com/docs/models/gpt-4o) for personalized recommendations
+
+### Database Schema & Relationships
+
+The database schema is centered around the **User** and their interactions with movies and genres. Here's a high-level overview of the key models and their relationships:
+
+- **User**: Core model representing a user of the system. Stores basic user info, verification status, and profile image.
+- **UserPreference**: Tracks movies that the user has liked.
+- **UserPreferredGenre**: Stores the genres preferred by the user.
+- **Session**: Handles user sessions, including token-based authentication with optional IP/device metadata.
+- **Account**: Supports third-party or internal authentication, including OAuth tokens and session expiry.
+- **Verification**: Used for sign-up/login verifications, such as email or phone number confirmation.
+
+The schema supports secure authentication, flexible preference tracking, and seamless integration with external auth providers. Here is the simplified ER diagram for quick reference:
+
+```
+User
+ ├── UserPreference (liked_movie_id)
+ ├── UserPreferredGenre (genre_id)
+ ├── Session (token, expiresAt)
+ ├── Account (OAuth tokens, provider)
+ └── Verification (identifier, value, expiry)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**File Storage Requirements:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **PostgreSQL** will store structured data (users, preferences, search_history).
+- **TMDB API** will provide movie posters and metadata instead of storing large media files locally.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### External Packages/API Summary
 
-## Setup the database and Prisma schema connection
+**UI & UX**
 
-Create a database if you don't have one yet
+| Package                                   | Purpose                                              |
+| ----------------------------------------- | ---------------------------------------------------- |
+| `tailwindcss`                             | Utility-first CSS framework                          |
+| `lucide-react`                            | Icon set (e.g., `Heart`, `LogOut`, `UserCircle`)     |
+| `shadcn/ui` (via Radix UI)                | Modular components like Dialog, Input, Command, etc. |
+| `sonner`                                  | Toast notifications for UI feedback                  |
+| `@dicebear/core` + `@dicebear/collection` | Random avatar generation                             |
 
-```bash
-createdb moviedb
+**Backend / API Integration**
+
+| Package  | Purpose                                            |
+| -------- | -------------------------------------------------- |
+| `openai` | GPT-4o movie recommendation via `chat.completions` |
+| `dotenv` | Load `.env` config (used by TMDB/OpenAI API keys)  |
+
+TMDB API is also used, but doesn’t require a library. We call it directly from `/api/search` or `/api/movies` or `/api/movies/[id]` route using fetch.
+
+**Auth, DB**
+
+| Package                    | Purpose                  |
+| -------------------------- | ------------------------ |
+| `better-auth`              | Auth wrapper for Next.js |
+| `@react-oauth/google`      | OAuth with Google        |
+| `prisma`, `@prisma/client` | DB ORM                   |
+
+## **User Guide**
+
+This section provides a step-by-step walkthrough of how users interact with the application. Screenshots are included to illustrate key components of the interface.
+
+### Navigation Bar
+
+<img width="1433" alt="image" src="https://github.com/user-attachments/assets/fad757f2-0b44-41f6-9a7e-9f7c6d5ae818" />
+<img width="1433" alt="image" src="https://github.com/user-attachments/assets/3a3db1a7-2c39-41a5-9ab8-50ffb8658989" />
+
+The navigation bar is consistent across all pages, providing easy access to essential features:
+
+- **Login Button**
+
+  Logins the user or allows the user to register an account.
+
+- **Homepage Button**
+  On most pages, this button is visible and takes the user directly back to the homepage.
+- **Previous Button**
+  When viewing a movie detail page, the homepage button is replaced with a **“Previous”** button. This lets the user navigate back to the last viewed movie detail (or page in history).
+- **Profile**
+  Opens the user’s profile page to manage account and preferences.
+- **Logout**
+  Logs the user out and returns them to the login screen.
+
+This adaptive navigation enhances usability and keeps the browsing experience intuitive.
+
+### Register & Login
+
+Users must register or log in to access the application’s full functionality.
+
+- **Register**: Fill in your name, age (optional), email, and password.
+
+<img width="484" alt="image" src="https://github.com/user-attachments/assets/0931d3e3-adcc-40c1-90d5-4b5fd72dbaf7" />
+    
+- **Login**: Enter your email and password, or continue with Google for OAuth sign-in.
+    
+<img width="486" alt="image" src="https://github.com/user-attachments/assets/ddb2d4ac-5980-4850-a1a7-17373b0b75a3" />
+
+### Profile Page
+
+Accessible via the navbar, the profile page allows users to manage their account and preferences. It features a sidebar with three sections:
+
+1. **Personal Info**
+
+   Displays your name and email. You can also select a new avatar (UI only for now).
+
+<img width="1432" alt="image" src="https://github.com/user-attachments/assets/c944790e-ebc8-4acc-8911-d93a25c50ef5" />
+    
+2. **Genre Preferences**
+    
+    View and edit your favorite genres by opening a modal and selecting from available tags.
+    
+    
+<img width="1425" alt="image" src="https://github.com/user-attachments/assets/09c79878-cdc3-4c71-99eb-a281f215fcdf" />
+
+<img width="899" alt="image" src="https://github.com/user-attachments/assets/cfd56dab-3db9-426d-a102-59dc99884dc5" />
+
+3. **Movie Preferences**
+
+   View your liked movies and watch history. You can edit both via a movie selection modal. The movie list is generated using a **zero-shot GPT-4o API call**, which offers strong initial suggestions even without prior user input.
+
+<img width="1433" alt="image" src="https://github.com/user-attachments/assets/b9dba2fe-babd-4cf8-8748-6f4371737210" />
+<img width="936" alt="image" src="https://github.com/user-attachments/assets/db19b133-5988-4840-aaae-dbd7ecdfc5e3" />
+
+### Homepage
+
+After logging in, users land on the homepage, which features:
+
+1. **Search Bar**
+
+   Type a keyword to search for movies. The input is debounced and suggestions appear in a dropdown. Clicking a result takes you to that movie’s detail page.
+
+<img width="1431" alt="image" src="https://github.com/user-attachments/assets/ddb15857-ea86-489a-bbff-4b914e966754" />
+<img width="1098" alt="image" src="https://github.com/user-attachments/assets/2c69c7e0-5c65-407b-b5da-d9e34d6a3c0f" />
+
+2. **Top 10 Popular Movies**
+
+   A scrollable row of cards showing trending movies with poster, title, and genres.
+
+<img width="1071" alt="image" src="https://github.com/user-attachments/assets/900441b0-a4e3-46a6-bb84-f5ae002b8b97" />
+    
+3. **Movies Recommended for You**
+    
+    Personalized recommendations generated via GPT-4o, displayed in a horizontal scrollable list.
+    
+<img width="1056" alt="image" src="https://github.com/user-attachments/assets/a95d9c09-5297-4a1a-803e-4cdc4075571f" />
+
+### Movie Detail Page
+
+Clicking a movie opens its detail page with the following:
+
+- **Poster, title, genres, and description**
+- UI buttons for:
+  - **Like** (currently UI-only)
+  - **Add to Watchlist** (currently UI-only)
+  - **Share** (opens a dialog)
+
+<img width="1003" alt="image" src="https://github.com/user-attachments/assets/745eeb5b-62aa-46ec-a968-3de4bf2a849c" />
+
+At the bottom, a scrollable “You Might Also Like” section suggests similar movies based on the selected title and user preferences.
+
+<img width="1066" alt="image" src="https://github.com/user-attachments/assets/5a094fb8-3a3d-4995-8939-de5b887d14b0" />
+
+## **Development Guide**
+
+### Environment Setup and Configuration
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/GTArrow/MovieRecommenderSystem.git
+   cd MovieRecommenderSystem
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+   - Create a `.env.local` file in the root directory.
+   - Add your PostgreSQL database URL:
+     ```bash
+     DATABASE_URL="postgresql://your_user:your_password@localhost:5432/moviedb"
+     ```
+4. **Start the development server**:
+
+   ```bash
+   npm run dev
+   ```
+
+   Visit [http://localhost:3000](http://localhost:3000/) to view the app.
+
+### Database Initialization
+
+1. **Create a local PostgreSQL database** (if you haven’t already):
+
+   ```bash
+   createdb moviedb
+   ```
+
+2. **Push the Prisma schema to the database**:
+
+   ```bash
+   npx prisma db push
+   ```
+
+3. _(Optional)_ **Generate the Prisma client manually** (usually auto-handled):
+
+   ```bash
+   npx prisma generate
+   ```
+
+4. **Launch Prisma Studio to view your database in a browser UI**:
+
+   ```bash
+   npm run studio
+   ```
+
+5. **(Optional)** Use this to push schema updates via npm script:
+
+   ```bash
+   npm run prisma-push
+   ```
+
+6. **Generate auth schema required by Better Auth**:
+
+   ```bash
+   npx @better-auth/cli generate --config src/lib/auth.ts
+   ```
+
+### Local Development and Testing
+
+- **Start the server** (again, if not already running):
+  ```bash
+  npm run dev
+  ```
+- **Add new Shadcn UI components**:
+  ```bash
+  npx shadcn add <component-name>
+  ```
+  Example:
+  ```bash
+  npx shadcn add textarea
+  ```
+- **Tailwind VSCode Integration**:
+  If you see `UnknownAtRules` warnings, install the Tailwind CSS VSCode extension and configure your settings: [Fix Guide](https://stackoverflow.com/questions/65247279/unknown-at-rule-tailwind-cssunknownatrules)
+- **Testing**: Not implemented yet. Will be added in future development steps.
+
+### Environment Variables
+
+Copy the `.env.example` file to a `.env.local` file in the root directory to store your sensitive environment-specific configurations. Below are the required variables and their purposes:
+
+```
+TMDB_API_KEY=              # Your TMDB API key for fetching movie data
+DATABASE_URL=              # PostgreSQL connection string (e.g. postgresql://user:pass@localhost:5432/moviedb)
+BETTER_AUTH_SECRET=        # Secret key for Better Auth session encryption
+GOOGLE_CLIENT_ID=          # Google OAuth client ID
+GOOGLE_CLIENT_SECRET=      # Google OAuth client secret
+BETTER_AUTH_URL=http://localhost:3000  # Auth URL base (typically localhost in dev)
+NODE_ENV=development       # Node environment (use 'development' locally)
+OPENAI_API_KEY=            # Optional: OpenAI API key (if using GPT features)
+NEXT_PUBLIC_ENABLE_GPT=false  # Public toggle to enable GPT-based features (set to 'true' to activate)
+
 ```
 
-Replace the database URL with your PostgreSQL connection string in the env.local:
+Note: Never commit the `.env.local` file to version control, which is already listed in `.gitignore`.
 
-```bash
-DATABASE_URL="postgresql://your_user:your_password@localhost:5432/moviedb"
+## **Individual Contributions**
 
-```
+### **Yixuan Liu** – _Frontend & UI/UX, GPT Integration_
 
-Run the following to create tables in your PostgreSQL DB:
+- Designed and implemented the frontend using **Next.js**, **Tailwind CSS**, and **shadcn/ui**
+- Built responsive UI components for homepage, nav bar, search bar and movie detail page
+- Implemented **GPT-4o API** integration for generating personalized recommendations
+- Handled dynamic rendering of recommendations and scrollable movie lists
+- Styled and structured the profile page layout and interactions
+- Collaborated on documentation and final deliverables
 
-```bash
-npx prisma db push
+### **Yijun Chen** – _Backend, API Integration & Authentication_
 
-```
+- Implemented the complete sign-up, sign-in, and OAuth login flow using **BetterAuth**
+- Developed **API Routes** and **Server Actions** for backend logic and data processing
+- Integrated external services: **TMDB API** for movie data
+- Set up and managed the **PostgreSQL** database using **Prisma ORM**
+- Built backend logic for updating liked genres and movies from the profile page
+- Handled secure session management and server-client communication
+- Contributed to documentation and final deliverables
 
-Optional: Generate Prisma Client (should happen automatically):
+## **Lessons Learned and Concluding Remarks**
 
-```bash
-npx prisma generate
+We gained both technical and collaborative skills while building a functional, full-stack movie recommendation system. Here are some key lessons:
 
-```
+- **Design the database schema clearly from the start** to avoid repeated changes and complex migrations.
+- Once the **UI structure is settled**, define all necessary API actions early on. This helps clarify data flow and prevents misalignment between frontend and backend logic.
+- Working with **Next.js**, a framework we were initially unfamiliar with, taught us how to set up routing, handle server-side logic, and manage full-stack architecture efficiently.
+- **UI development is iterative**—small changes in logic or API responses often required multiple frontend updates. A well-defined interface and data model upfront would have streamlined this process.
+- To keep the **codebase organized**, we learned to follow common conventions such as separating **components**, **utils**, **lib**, and **types** into clearly structured folders. This made the code easier to navigate and maintain.
+- Integration with third-party services like **TMDB** and **GPT-4o** reinforced the importance of carefully reading documentation, managing API limitations, and handling edge cases.
 
-Run the following to open up prisma studio:
-
-```bash
-npm run studio
-
-```
-
-Run the following to push any prisma udpate:
-
-```bash
-npm run prisma-push
-
-```
-
-Run the following to create schema required by Better Auth
-
-```bash
-npx @better-auth/cli generate --config src/lib/auth.ts
-```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Additional Resources
-
-- [React Context API](https://react.dev/reference/react/createContext)
-- [Lucide Icons](https://lucide.dev/icons/): The Shadcn UI Kit for Figma uses the Lucide icons as its main icon library.
-
-# Development Notes
-
-**How to solve UnknownAtRules issues**: Add Tailwind CSS VSCode extension and configure file association for '.css' file: [link](https://stackoverflow.com/questions/65247279/unknown-at-rule-tailwind-cssunknownatrules)
-
-**Add Shadcn components**: `npx shadcn add textarea` (or you can add multiple components in a single command)
+This project gave us practical experience with a modern web stack and helped us improve both technically and collaboratively. It strengthened our confidence in building full-stack apps and taught us the value of planning, iteration, and clean code organization.
