@@ -6,9 +6,9 @@ const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   if (!TMDB_API_KEY) {
     return NextResponse.json(
