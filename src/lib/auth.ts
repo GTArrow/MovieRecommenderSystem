@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 import { customSession } from "better-auth/plugins";
 import { SessionUser } from "@/types/user";
+import { genreMap } from "@/lib/genres";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -27,9 +28,21 @@ export const auth = betterAuth({
       });
 
       const likedMovieIds = preferences.map((p) => p.liked_movie_id);
+
+      const genrePrefs = await prisma.userPreferredGenre.findMany({
+        where: { userId: user.id },
+        select: { genre_id: true },
+      });
+
+      const likedGenreIds = genrePrefs.map((g) => g.genre_id);
+      const likedGenres = likedGenreIds
+        .map((id) => genreMap[id])
+        .filter(Boolean);
+
       const myUser: SessionUser = {
         ...user,
         likedMovieIds,
+        likedGenres,
       };
       return {
         session,

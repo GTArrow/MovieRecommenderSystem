@@ -6,6 +6,7 @@ import { User } from "better-auth/types";
 
 export interface SessionUser extends User {
   likedMovieIds?: number[];
+  likedGenres?: string[];
 }
 
 export interface UserPreferenceMovieDetail extends UserPreference {

@@ -6,13 +6,15 @@ import ScrollableMovieList from "@/components/ScrollableMovieList";
 import { useMovies } from "@/context/MovieContext";
 import { MovieBasicInfo, Movie } from "@/types/movie";
 import MovieInfo from "./components/MovieInfo";
+import { SessionUser } from "@/types/user";
+import { authClient } from "@/lib/auth-client";
 
 function Loading() {
   return <p className="text-center mt-10">Loading movie...</p>;
 }
 
-const mockLikedMovieIds = ["603", "157336", "27205"];
-const mockLikedGenres = ["Sci-Fi", "Comedy", "Action", "Drama"];
+// const mockLikedMovieIds = ["603", "157336", "27205"];
+// const mockLikedGenres = ["Sci-Fi", "Comedy", "Action", "Drama"];
 
 export default function MovieDetail() {
   const params = useParams();
@@ -21,8 +23,13 @@ export default function MovieDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<MovieBasicInfo[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(true);
+  const { data: session } = authClient.useSession();
 
   const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
+  const user = session?.user as SessionUser;
+  //console.log("User", user);
+  const likedMovieIds = user?.likedMovieIds ?? [];
+  const likedGenres = user?.likedGenres ?? [];
 
   useEffect(() => {
     async function loadMovie() {
@@ -63,9 +70,9 @@ export default function MovieDetail() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             currentMovie: movie,
-            likedGenres: mockLikedGenres,
-            likedMovieIds: mockLikedMovieIds,
-            count: 6,
+            likedGenres: likedGenres,
+            likedMovieIds: likedMovieIds,
+            count: 10,
           }),
         });
 

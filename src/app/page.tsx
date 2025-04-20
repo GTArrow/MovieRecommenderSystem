@@ -4,16 +4,23 @@ import { useEffect, useState } from "react";
 import ScrollableMovieList from "@/components/ScrollableMovieList";
 import { useMovies } from "@/context/MovieContext";
 import HeroSection from "./home/components/HeroSection";
+import { SessionUser } from "@/types/user";
+import { authClient } from "@/lib/auth-client";
 
-const mockLikedMovieIds = ["603", "157336", "27205"];
-const mockLikedGenres = ["Sci-Fi", "Comedy", "Action", "Drama"];
+// const mockLikedMovieIds = ["603", "157336", "27205"];
+// const mockLikedGenres = ["Sci-Fi", "Comedy", "Action", "Drama"];
 
 export default function Home() {
   const { movies, setMovies } = useMovies();
   const [loadingRecs, setLoadingRecs] = useState(true);
   const [recommendations, setRecommendations] = useState([]);
+  const { data: session } = authClient.useSession();
 
   const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
+  const user = session?.user as SessionUser;
+  //console.log("User", user);
+  const likedMovieIds = user?.likedMovieIds ?? [];
+  const likedGenres = user?.likedGenres ?? [];
 
   useEffect(() => {
     async function fetchMovies() {
@@ -40,8 +47,8 @@ export default function Home() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            likedGenres: mockLikedGenres,
-            likedMovieIds: mockLikedMovieIds,
+            likedGenres: likedGenres,
+            likedMovieIds: likedMovieIds,
             count: 10,
           }),
         });
