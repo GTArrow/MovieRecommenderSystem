@@ -1,9 +1,13 @@
 "use client";
 
-import { LogOut as LogOutIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  House,
+  UserCircle,
+  LogOut as LogOutIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/auth-actions";
 import { authClient } from "@/lib/auth-client";
@@ -30,13 +34,18 @@ export default function NavBar() {
         <Button
           variant="ghost"
           onClick={() => router.back()}
-          className="flex items-center"
+          className="flex items-center gap-2"
         >
-          <ArrowLeft />
-          Previous
+          <ArrowLeft className="w-5 h-5" />
+          <span>Previous</span>
         </Button>
       ) : (
-        <div className="w-[120px]" /> // Reserve space for symmetry
+        <Button asChild variant="ghost" className="flex items-center gap-2">
+          <Link href="/">
+            <House className="w-5 h-5" />
+            <span>Homepage</span>
+          </Link>
+        </Button>
       )}
 
       {/* Centered Title */}

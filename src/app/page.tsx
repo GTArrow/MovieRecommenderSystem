@@ -13,6 +13,8 @@ export default function Home() {
   const [loadingRecs, setLoadingRecs] = useState(true);
   const [recommendations, setRecommendations] = useState([]);
 
+  const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
+
   useEffect(() => {
     async function fetchMovies() {
       try {
@@ -31,6 +33,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchRecommendations() {
+      if (!gptEnabled) return;
       setLoadingRecs(true);
       try {
         const res = await fetch("/api/recommendations", {
@@ -53,7 +56,7 @@ export default function Home() {
     }
 
     fetchRecommendations();
-  }, []);
+  }, [gptEnabled]);
 
   return (
     <div className="p-6">
@@ -62,14 +65,20 @@ export default function Home() {
       <h2 className="text-2xl font-bold mt-10 mb-4">Top 10 Popular Movies</h2>
       <ScrollableMovieList movies={movies} />
 
-      <h2 className="text-2xl font-bold mt-6 mb-4">
-        Movies Recommended for You
-      </h2>
+      {gptEnabled && (
+        <div>
+          <h2 className="text-2xl font-bold mt-6 mb-4">
+            Movies Recommended for You
+          </h2>
 
-      {loadingRecs ? (
-        <p className="text-muted-foreground mb-6">Loading recommendations...</p>
-      ) : (
-        <ScrollableMovieList movies={recommendations} />
+          {loadingRecs ? (
+            <p className="text-muted-foreground mb-6">
+              Loading recommendations...
+            </p>
+          ) : (
+            <ScrollableMovieList movies={recommendations} />
+          )}
+        </div>
       )}
     </div>
   );

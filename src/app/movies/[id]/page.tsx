@@ -22,6 +22,8 @@ export default function MovieDetail() {
   const [recommendations, setRecommendations] = useState<MovieBasicInfo[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(true);
 
+  const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
+
   useEffect(() => {
     async function loadMovie() {
       setIsLoading(true);
@@ -51,7 +53,7 @@ export default function MovieDetail() {
 
   useEffect(() => {
     async function fetchRecommendations() {
-      if (!movie) return;
+      if (!movie || !gptEnabled) return;
       setLoadingRecs(true);
 
       try {
@@ -76,7 +78,7 @@ export default function MovieDetail() {
     }
 
     fetchRecommendations();
-  }, [movie]);
+  }, [movie, gptEnabled]);
 
   if (isLoading) return <Loading />;
   if (!movie) return <p className="text-center mt-10">Movie not found</p>;
@@ -85,14 +87,16 @@ export default function MovieDetail() {
     <div className="max-w-5xl mx-auto px-6 py-10">
       {!movie ? <Loading /> : <MovieInfo movie={movie} />}
 
-      <div className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">You Might Also Like</h2>
-        {loadingRecs ? (
-          <p>Loading recommendations...</p>
-        ) : (
-          <ScrollableMovieList movies={recommendations} />
-        )}
-      </div>
+      {gptEnabled && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold mb-4">You Might Also Like</h2>
+          {loadingRecs ? (
+            <p>Loading recommendations...</p>
+          ) : (
+            <ScrollableMovieList movies={recommendations} />
+          )}
+        </div>
+      )}
     </div>
   );
 }

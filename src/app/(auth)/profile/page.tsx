@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Sidebar from "./components/ProfileSidebar";
-import AvatarSelector from "./components/AvatarSelector";
 import PersonalInfo from "./components/PersonalInfo";
 import GenrePreferences from "./components/GenrePreferences";
 import MoviePreferences from "./components/MoviePreferences";
