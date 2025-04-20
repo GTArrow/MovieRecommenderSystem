@@ -13,11 +13,20 @@ import { MovieBasicInfo } from "@/types/movie";
 interface MovieCardProps {
   movie: MovieBasicInfo;
   onClick?: () => void; // optional toggle behavior
+  selected?: boolean;
 }
 
-export default function MovieCard({ movie, onClick }: MovieCardProps) {
+export default function MovieCard({
+  movie,
+  onClick,
+  selected,
+}: MovieCardProps) {
   const content = (
-    <Card className="w-[220px] overflow-hidden cursor-pointer">
+    <Card
+      className={`w-[220px] overflow-hidden cursor-pointer rounded-none border-0 ${
+        selected ? "border-blue-400 border-2" : "border-transparent"
+      }`}
+    >
       <Image
         src={movie.poster}
         alt={movie.title}

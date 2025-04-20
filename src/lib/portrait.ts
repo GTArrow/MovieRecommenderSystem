@@ -1,0 +1,18 @@
+export const avatarNames = [
+  "Oliver",
+  "Lucas",
+  "Nova",
+  "Chloe",
+  "Leo",
+  "Aria",
+  "Max",
+  "Zara",
+  "Finn",
+  "Luna",
+  "Kai",
+  "Mila",
+  "Ezra",
+  "Ivy",
+  "Jasper",
+  "Sienna",
+];

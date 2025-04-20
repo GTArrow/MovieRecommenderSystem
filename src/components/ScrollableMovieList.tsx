@@ -12,8 +12,8 @@ export default function ScrollableMovieList({
   movies,
 }: ScrollableMovieListProps) {
   return (
-    <ScrollArea className="w-[80vw] max-w-screen-lg mx-auto rounded-md">
-      <div className="flex w-max space-x-4 p-4">
+    <ScrollArea className="w-[80vw] max-w-screen-lg mx-auto">
+      <div className="flex w-max p-4 pl-0">
         {movies &&
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)}
       </div>

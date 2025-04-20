@@ -31,7 +31,6 @@ export default function GenrePreferences({
   const [tempGenres, setTempGenres] = useState<number[]>(selectedGenres);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
   const toggleGenre = (genreId: number) => {
     setTempGenres((prev) =>
       prev.includes(genreId)
@@ -91,7 +90,7 @@ export default function GenrePreferences({
           <DialogTrigger asChild>
             <Button variant="outline">Edit</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="min-w-6xl w-full max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Select Your Favorite Genres</DialogTitle>
             </DialogHeader>
@@ -119,18 +118,20 @@ export default function GenrePreferences({
         </Dialog>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
         {selectedGenres.length > 0 ? (
           selectedGenres.map((id) => (
             <span
               key={id}
-              className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
+              className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm text-center"
             >
               {getGenreName(id)}
             </span>
           ))
         ) : (
-          <p className="text-muted-foreground">No genres selected yet.</p>
+          <p className="text-muted-foreground col-span-full">
+            No genres selected yet.
+          </p>
         )}
       </div>
     </Card>

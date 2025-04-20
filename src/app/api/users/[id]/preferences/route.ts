@@ -1,6 +1,34 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = await params;
+  const userId = id;
+
+  if (!userId) {
+    return new NextResponse("Missing user ID", { status: 400 });
+  }
+
+  try {
+    const preferences = await prisma.userPreference.findMany({
+      where: { userId },
+      select: {
+        liked_movie_id: true,
+      },
+    });
+
+    const likedMovieIds = preferences.map((pref) => pref.liked_movie_id);
+
+    return NextResponse.json(likedMovieIds);
+  } catch (error) {
+    console.error("[GET /preferences/:id]", error);
+    return new NextResponse("Server error", { status: 500 });
+  }
+}
+
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }

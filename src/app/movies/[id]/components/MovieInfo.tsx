@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Movie } from "@/types/movie";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import {
   Dialog,
   DialogTrigger,
@@ -19,18 +20,68 @@ import { Heart, HeartIcon } from "lucide-react"; // Lucide icons
 export default function MovieInfo({ movie }: { movie: Movie }) {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [liked, setLiked] = useState(false);
+  const { data: session } = authClient.useSession();
+
+  const userId = session?.user?.id;
+  const movieId = parseInt(movie.id);
+  const endpoint = `/api/users/${userId}/preferences`;
+  //const likedMovieIds = session?.user.likedMovieIds ?? [];
 
   const handleAddToWatchlist = () => {
     toast("Movie added to watchlist (Upcoming feature)");
   };
 
-  const handleToggleLike = () => {
-    setLiked((prev) => !prev);
-    toast(
-      liked
-        ? "Removed from liked movies"
-        : "Movie added to liked list (Upcoming feature)"
-    );
+  useEffect(() => {
+    const fetchLikedStatus = async () => {
+      if (!userId) return;
+      try {
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error("Failed to fetch liked movies");
+        const likedIds: number[] = await res.json();
+        setLiked(likedIds.includes(movieId));
+      } catch (err) {
+        console.error("Error loading liked status", err);
+      }
+    };
+    fetchLikedStatus();
+  }, [userId, movieId]);
+
+  // useEffect(() => {
+  //   setLiked(likedMovieIds.includes(movieId));
+  // }, [likedMovieIds, movieId]);
+
+  const handleToggleLike = async () => {
+    if (!userId) {
+      toast("Please log in to like movies");
+      return;
+    }
+
+    try {
+      if (!liked) {
+        const res = await fetch(endpoint + "/single", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ liked_movie_id: movieId }),
+        });
+
+        if (!res.ok) throw new Error("Failed to like movie");
+        toast("Movie added to liked list");
+        setLiked(true);
+      } else {
+        const res = await fetch(endpoint, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ liked_movie_ids: [movieId] }),
+        });
+
+        if (!res.ok) throw new Error("Failed to unlike movie");
+        toast("Removed from liked movies");
+        setLiked(false);
+      }
+    } catch (err) {
+      toast("Something went wrong");
+      console.error(err);
+    }
   };
 
   return (

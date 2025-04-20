@@ -47,13 +47,35 @@ function buildUserPrompt({
   }
 
   // User Preferences
-  lines.push(
-    `The user likes the following genres: ${likedGenres.join(", ")}.`,
-    `They also previously enjoyed the following TMDB movie IDs: ${likedMovieIds.join(
-      ", "
-    )}.`,
-    ``
-  );
+  if (likedGenres.length > 0 || likedMovieIds.length > 0) {
+    if (likedGenres.length > 0) {
+      lines.push(
+        `The user likes the following genres: ${likedGenres.join(", ")}.`
+      );
+    }
+
+    if (likedMovieIds.length > 0) {
+      lines.push(
+        `They also previously enjoyed the following TMDB movie IDs: ${likedMovieIds.join(
+          ", "
+        )}.`
+      );
+      lines.push(
+        `Do not recommend any of these TMDB movie IDs (${likedMovieIds.join(
+          ", "
+        )}) again in the response.`
+      );
+    }
+
+    lines.push(``);
+  } else {
+    lines.push(
+      `The user has not provided any liked genres or previously liked movies.`,
+      `Please make general movie recommendations that are widely appealing, popular, or critically acclaimed.`,
+      `You may include a mix of genres and styles.`,
+      ``
+    );
+  }
 
   // Output Format Instructions
   lines.push(

@@ -53,6 +53,7 @@ export default function MovieDetail() {
 
   useEffect(() => {
     async function fetchRecommendations() {
+      console.log("Fetching recommendations with GPT...: ", gptEnabled);
       if (!movie || !gptEnabled) return;
       setLoadingRecs(true);
 
