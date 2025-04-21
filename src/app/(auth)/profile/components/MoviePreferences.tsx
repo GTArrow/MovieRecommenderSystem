@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import { Movie } from "@/types/movie";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,19 +14,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import MovieListContainer from "./MovieListContainer";
+// import MovieListContainer from "./MovieListContainer";
 import { UserPreferenceMovieDetail } from "@/types/user";
 
 const dummyMovies: Movie[] = [
   {
-    id: "1",
+    id: "157336",
     title: "Interstellar",
     genres: ["Sci-Fi", "Drama"],
     description: "A team of explorers travel through a wormhole in space.",
-    poster: "https://image.tmdb.org/t/p/w500/xUkUZ8eOnrOnnJAfusZUqKYZiDu.jpg",
+    poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
   },
   {
-    id: "2",
+    id: "27205",
     title: "Inception",
     genres: ["Action", "Thriller"],
     description:
@@ -34,7 +34,7 @@ const dummyMovies: Movie[] = [
     poster: "https://image.tmdb.org/t/p/w200/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
   },
   {
-    id: "3",
+    id: "603",
     title: "The Matrix",
     genres: ["Sci-Fi", "Action"],
     description: "A computer hacker learns the truth about his reality.",
@@ -212,6 +212,7 @@ export default function MoviePreferences({
                     <div className="flex w-max p-4 pl-0">
                       {recommendations.map((movie) => (
                         <MovieCard
+                          key={movie.id}
                           movie={movie}
                           selected={isLiked(movie.id)}
                           onClick={() => toggleLiked(movie)}

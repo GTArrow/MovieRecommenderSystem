@@ -197,25 +197,27 @@ Accessible via the navbar, the profile page allows users to manage their account
 
 1. **Personal Info**
 
-   Displays your name and email. You can also select a new avatar (UI only for now).
+   Displays your name, email and your age (if applicable). You can also select and edit your avatar.
 
-<img width="1432" alt="image" src="https://github.com/user-attachments/assets/c944790e-ebc8-4acc-8911-d93a25c50ef5" />
-    
+<img width="1240" alt="image" src="https://github.com/user-attachments/assets/a696953d-8579-495c-a8ac-06eca5cb4e8f" />
+<img width="997" alt="image" src="https://github.com/user-attachments/assets/682cfec4-9326-493d-a132-0f7d80775bb3" />
+<img width="1007" alt="image" src="https://github.com/user-attachments/assets/fa9294bf-557a-4554-8c21-cfa8924949b1" />
+
 2. **Genre Preferences**
-    
-    View and edit your favorite genres by opening a modal and selecting from available tags.
-    
-    
-<img width="1425" alt="image" src="https://github.com/user-attachments/assets/09c79878-cdc3-4c71-99eb-a281f215fcdf" />
 
-<img width="899" alt="image" src="https://github.com/user-attachments/assets/cfd56dab-3db9-426d-a102-59dc99884dc5" />
+   View and edit your favorite genres by opening a modal and selecting from available tags.
+
+<img width="1237" alt="image" src="https://github.com/user-attachments/assets/008d70c8-5db1-4b6b-b6a6-bd138612fd84" />  
+<img width="1346" alt="image" src="https://github.com/user-attachments/assets/2fc3ecf1-cf13-4335-b502-18737da0ca96" />
 
 3. **Movie Preferences**
 
-   View your liked movies and watch history. You can edit both via a movie selection modal. The movie list is generated using a **zero-shot GPT-4o API call**, which offers strong initial suggestions even without prior user input.
+   View your liked movies and watch history. You can edit both via a movie selection modal. The movie list is generated using a **zero-shot GPT-4o API call**, which offers strong initial suggestions even without prior user input. (The watch history section is not editable now, will be implemented in future)
 
-<img width="1433" alt="image" src="https://github.com/user-attachments/assets/b9dba2fe-babd-4cf8-8748-6f4371737210" />
-<img width="936" alt="image" src="https://github.com/user-attachments/assets/db19b133-5988-4840-aaae-dbd7ecdfc5e3" />
+<img width="1437" alt="image" src="https://github.com/user-attachments/assets/68f7a668-8355-410f-b2d5-9e6299568983" />
+<img width="1400" alt="image" src="https://github.com/user-attachments/assets/94f3691b-be4a-4617-96c2-2db7d6720b4c" />
+<img width="964" alt="image" src="https://github.com/user-attachments/assets/31690192-ade3-4a96-961a-b11bb7d7ed4a" />
+<img width="965" alt="image" src="https://github.com/user-attachments/assets/ee9b2a55-a9e8-4e62-b2ae-4c74ddc0a694" />
 
 ### Homepage
 
@@ -232,13 +234,13 @@ After logging in, users land on the homepage, which features:
 
    A scrollable row of cards showing trending movies with poster, title, and genres.
 
-<img width="1071" alt="image" src="https://github.com/user-attachments/assets/900441b0-a4e3-46a6-bb84-f5ae002b8b97" />
+<img width="1064" alt="image" src="https://github.com/user-attachments/assets/7c980a1b-a48e-4808-9d00-49ac5561a216" />
     
 3. **Movies Recommended for You**
     
     Personalized recommendations generated via GPT-4o, displayed in a horizontal scrollable list.
     
-<img width="1056" alt="image" src="https://github.com/user-attachments/assets/a95d9c09-5297-4a1a-803e-4cdc4075571f" />
+<img width="1059" alt="image" src="https://github.com/user-attachments/assets/745cd6a9-a082-44a4-82c1-a0373c68769f" />
 
 ### Movie Detail Page
 
@@ -254,7 +256,7 @@ Clicking a movie opens its detail page with the following:
 
 At the bottom, a scrollable “You Might Also Like” section suggests similar movies based on the selected title and user preferences.
 
-<img width="1066" alt="image" src="https://github.com/user-attachments/assets/5a094fb8-3a3d-4995-8939-de5b887d14b0" />
+<img width="1074" alt="image" src="https://github.com/user-attachments/assets/4f82a8d3-cdb8-4e39-b3cf-917e3bfe7d37" />
 
 ## **Development Guide**
 

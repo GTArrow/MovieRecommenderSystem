@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
         pathname: "/t/p/**",
       },
     ],
+    domains: ["lh3.googleusercontent.com"],
   },
   eslint: {
     ignoreDuringBuilds: true,
