@@ -16,20 +16,3 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-// Helper function to batch fetch genre name by ID
-export async function batchFetchGenresById(ids: number[]): Promise<Genre[]> {
-  try {
-    const genres: Genre[] = ids
-      .filter((id) => genreMap[id] !== undefined)
-      .map((id) => ({
-        id,
-        name: genreMap[id],
-      }));
-
-    return genres;
-  } catch (error) {
-    console.error("[batchFetchGenresById] Failed to map genres:", error);
-    return [];
-  }
-}

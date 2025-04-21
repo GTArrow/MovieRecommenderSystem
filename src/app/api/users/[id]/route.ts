@@ -5,9 +5,8 @@ import { RawUser, EnrichedUser } from "@/types/user";
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { params } = context;
   const { id } = await params;
   const userId = id;
 
@@ -76,9 +75,8 @@ interface UpdateUserPayload {
 
 export async function PATCH(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { params } = context;
   const { id } = await params;
   const userId = id;
 

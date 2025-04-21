@@ -10,6 +10,7 @@ package-lock.json
 # env files
 .env
 .env.local
+.env.production
 
 # OS
 .DS_Store

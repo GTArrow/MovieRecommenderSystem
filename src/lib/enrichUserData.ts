@@ -1,6 +1,6 @@
 // lib/enrichUserData.ts
-import { fetchMovieById } from "@/app/api/movies/route";
-import { batchFetchGenresById } from "@/app/api/genres/route";
+import { fetchMovieById } from "@/lib/utils";
+import { batchFetchGenresById } from "@/lib/utils";
 import {
   UserPreferenceMovieDetail,
   UserPreferredGenreDetail,

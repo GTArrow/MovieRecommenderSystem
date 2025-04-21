@@ -17,12 +17,14 @@ export async function GET() {
         image: true,
         preferences: {
           select: {
+            userId: true,
             liked_movie_id: true,
             createdAt: true,
           },
         },
         preferredGenres: {
           select: {
+            userId: true,
             genre_id: true,
             createdAt: true,
           },
