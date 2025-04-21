@@ -7,7 +7,7 @@
 
 ## Video Demo
 
-Here’s the video demo link:
+Here’s the video demo link: https://share.vidyard.com/watch/XHokxoLiy8buxm8BAJZ7Lh
 
 ## Motivation
 
