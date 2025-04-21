@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import ScrollableMovieList from "@/components/ScrollableMovieList";
 import { useMovies } from "@/context/MovieContext";
@@ -23,11 +23,14 @@ export default function MovieDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<MovieBasicInfo[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(true);
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
   const user = session?.user as SessionUser;
   //console.log("User", user);
+
+  // Track if we've already fetched recommendations
+  const hasFetchedRecs = useRef(false);
 
   useEffect(() => {
     async function loadMovie() {
@@ -59,22 +62,24 @@ export default function MovieDetail() {
   useEffect(() => {
     async function fetchRecommendations() {
       console.log("Fetching recommendations with GPT...: ", gptEnabled);
-      if (!movie || !gptEnabled) return;
+      if (!movie || hasFetchedRecs.current) return;
+
       setLoadingRecs(true);
+      hasFetchedRecs.current = true;
 
       try {
-        // console.log("recommendations", {
-        //   likedGenres: user.likedGenres,
-        //   likedMovieIds: user.likedMovieIds,
-        //   count: 10,
-        // });
+        console.log("recommendations", {
+          likedGenres: user?.likedGenres ?? [],
+          likedMovieIds: user?.likedMovieIds ?? [],
+          count: 10,
+        });
         const res = await fetch("/api/recommendations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             currentMovie: movie,
-            likedGenres: user.likedGenres,
-            likedMovieIds: user.likedMovieIds,
+            likedGenres: user?.likedGenres ?? [],
+            likedMovieIds: user?.likedMovieIds ?? [],
             count: 10,
           }),
         });
@@ -88,8 +93,10 @@ export default function MovieDetail() {
       }
     }
 
-    fetchRecommendations();
-  }, [movie, gptEnabled, user?.likedMovieIds, user?.likedGenres]);
+    if (!isPending) {
+      fetchRecommendations();
+    }
+  }, [movie, gptEnabled, user, isPending]);
 
   if (isLoading) return <Loading />;
   if (!movie) return <p className="text-center mt-10">Movie not found</p>;

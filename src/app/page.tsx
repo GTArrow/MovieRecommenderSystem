@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ScrollableMovieList from "@/components/ScrollableMovieList";
 import { useMovies } from "@/context/MovieContext";
 import HeroSection from "./home/components/HeroSection";
@@ -14,11 +14,14 @@ export default function Home() {
   const { movies, setMovies } = useMovies();
   const [loadingRecs, setLoadingRecs] = useState(true);
   const [recommendations, setRecommendations] = useState([]);
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
   const user = session?.user as SessionUser;
   //console.log("User", user);
+
+  // Track if we've already fetched recommendations
+  const hasFetchedRecs = useRef(false);
 
   useEffect(() => {
     async function fetchMovies() {
@@ -38,23 +41,18 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchRecommendations() {
-      if (!gptEnabled || !user || !user.likedMovieIds || !user.likedGenres)
-        return;
+      if (!gptEnabled || hasFetchedRecs.current) return;
+
       setLoadingRecs(true);
+      hasFetchedRecs.current = true;
 
       try {
-        // console.log("recommendations", {
-        //   likedGenres: user.likedGenres,
-        //   likedMovieIds: user.likedMovieIds,
-        //   count: 10,
-        // });
-
         const res = await fetch("/api/recommendations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            likedGenres: user.likedGenres,
-            likedMovieIds: user.likedMovieIds,
+            likedGenres: user?.likedGenres ?? [],
+            likedMovieIds: user?.likedMovieIds ?? [],
             count: 10,
           }),
         });
@@ -68,8 +66,10 @@ export default function Home() {
       }
     }
 
-    fetchRecommendations();
-  }, [gptEnabled, user?.likedGenres, user?.likedMovieIds]);
+    if (!isPending) {
+      fetchRecommendations();
+    }
+  }, [gptEnabled, user, isPending]);
 
   return (
     <div className="p-6">
