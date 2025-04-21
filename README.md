@@ -91,11 +91,14 @@ This project delivers a personalized, web-based movie recommendation system with
 - **API Handling**:
   - API Routes for fetching movie data
   - Server Actions for user interactions and DB updates
-- **Database & ORM**: PostgreSQL with Prisma for relational data modeling and access
-- **Authentication**: BetterAuth supports OAuth (Google) and email/password login with session handling
+- **Database & ORM**:
+  - PostgreSQL for relational data storage, provisioned through [Neon](https://neon.tech/), a serverless, scalable Postgres platform
+  - Prisma for type-safe database access and schema modeling
+- **Authentication**: [BetterAuth](https://better-auth.vercel.app/) supports both OAuth (Google) and email/password login with session and token management
 - **External APIs**:
-  - [TMDB API](https://developer.themoviedb.org/docs/getting-started) for movie metadata
-  - [GPT-4o API](https://platform.openai.com/docs/models/gpt-4o) for personalized recommendations
+  - [TMDB API](https://developer.themoviedb.org/docs/getting-started) for rich movie metadata
+  - [GPT-4o API](https://platform.openai.com/docs/models/gpt-4o) for LLM-based personalized movie recommendations
+- **Deployment**: Hosted on [Vercel](https://vercel.com/) for seamless CI/CD, automatic previews, and serverless API functions
 
 ### Database Schema & Relationships
 
@@ -364,6 +367,13 @@ NEXT_PUBLIC_ENABLE_GPT=false  # Public toggle to enable GPT-based features (set 
 
 Note: Never commit the `.env.local` file to version control, which is already listed in `.gitignore`.
 
+## Deployment Information
+
+The application is deployed on [**Vercel**](https://vercel.com/), a platform optimized for frontend frameworks and serverless functions. Vercel handles continuous integration and automatic deployments from the Git repository, enabling seamless updates with each commit.
+
+- **Live URL**: [https://movie-recommender-system-iqnm.vercel.app/](https://movie-recommender-system-iqnm.vercel.app/)
+- **Environment**: Production (with preview deployments for each branch)
+
 ## **Individual Contributions**
 
 ### **Yixuan Liu** – _Frontend & UI/UX, GPT Integration_
@@ -373,7 +383,7 @@ Note: Never commit the `.env.local` file to version control, which is already li
 - Implemented **GPT-4o API** integration for generating personalized recommendations
 - Handled dynamic rendering of recommendations and scrollable movie lists
 - Styled and structured the profile page layout and interactions
-- Collaborated on documentation and final deliverables
+- Contributed to final deliverables and documented the final report
 
 ### **Yijun Chen** – _Backend, API Integration & Authentication_
 
@@ -383,7 +393,8 @@ Note: Never commit the `.env.local` file to version control, which is already li
 - Set up and managed the **PostgreSQL** database using **Prisma ORM**
 - Built backend logic for updating liked genres and movies from the profile page
 - Handled secure session management and server-client communication
-- Contributed to documentation and final deliverables
+- deployed the application to Vercel with a Neon-hosted PostgreSQL database
+- Contributed to final deliverables and recorded the video demo
 
 ## **Lessons Learned and Concluding Remarks**
 
