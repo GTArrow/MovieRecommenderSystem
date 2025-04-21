@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 
 export const authClient = createAuthClient({
   /** the base url of auth server (optional if you're using the same domain) */
-  baseURL: "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_AUTH_URL,
 });
 
 export async function signUpWithEmail(formData: FormData) {
