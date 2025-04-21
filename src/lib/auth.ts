@@ -20,6 +20,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  trustedOrigins: [process.env.BETTER_AUTH_URL!],
   plugins: [
     customSession(async ({ user, session }) => {
       const preferences = await prisma.userPreference.findMany({
