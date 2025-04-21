@@ -28,8 +28,6 @@ export default function MovieDetail() {
   const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
   const user = session?.user as SessionUser;
   //console.log("User", user);
-  const likedMovieIds = user?.likedMovieIds ?? [];
-  const likedGenres = user?.likedGenres ?? [];
 
   useEffect(() => {
     async function loadMovie() {
@@ -65,13 +63,18 @@ export default function MovieDetail() {
       setLoadingRecs(true);
 
       try {
+        // console.log("recommendations", {
+        //   likedGenres: user.likedGenres,
+        //   likedMovieIds: user.likedMovieIds,
+        //   count: 10,
+        // });
         const res = await fetch("/api/recommendations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             currentMovie: movie,
-            likedGenres: likedGenres,
-            likedMovieIds: likedMovieIds,
+            likedGenres: user.likedGenres,
+            likedMovieIds: user.likedMovieIds,
             count: 10,
           }),
         });
@@ -86,7 +89,7 @@ export default function MovieDetail() {
     }
 
     fetchRecommendations();
-  }, [movie, gptEnabled]);
+  }, [movie, gptEnabled, user?.likedMovieIds, user?.likedGenres]);
 
   if (isLoading) return <Loading />;
   if (!movie) return <p className="text-center mt-10">Movie not found</p>;

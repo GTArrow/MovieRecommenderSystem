@@ -19,8 +19,6 @@ export default function Home() {
   const gptEnabled = process.env.NEXT_PUBLIC_ENABLE_GPT === "true";
   const user = session?.user as SessionUser;
   //console.log("User", user);
-  const likedMovieIds = user?.likedMovieIds ?? [];
-  const likedGenres = user?.likedGenres ?? [];
 
   useEffect(() => {
     async function fetchMovies() {
@@ -40,15 +38,23 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchRecommendations() {
-      if (!gptEnabled) return;
+      if (!gptEnabled || !user || !user.likedMovieIds || !user.likedGenres)
+        return;
       setLoadingRecs(true);
+
       try {
+        // console.log("recommendations", {
+        //   likedGenres: user.likedGenres,
+        //   likedMovieIds: user.likedMovieIds,
+        //   count: 10,
+        // });
+
         const res = await fetch("/api/recommendations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            likedGenres: likedGenres,
-            likedMovieIds: likedMovieIds,
+            likedGenres: user.likedGenres,
+            likedMovieIds: user.likedMovieIds,
             count: 10,
           }),
         });
@@ -63,7 +69,7 @@ export default function Home() {
     }
 
     fetchRecommendations();
-  }, [gptEnabled]);
+  }, [gptEnabled, user?.likedGenres, user?.likedMovieIds]);
 
   return (
     <div className="p-6">

@@ -79,7 +79,7 @@ function buildUserPrompt({
 
   // Output Format Instructions
   lines.push(
-    `Please recommend exactly ${count} TMDB movie IDs (as strings) that the user is likely to enjoy.`,
+    `Please recommend exactly ${count} TMDB movie IDs (as strings) that the user is likely to enjoy based on their liked Genres and liked Movies.`,
     ``,
     `Return your response as a JSON array of ${count} TMDB movie IDs, like:`,
     `["603", "157336", "447332", "244786", "274857"]`,
