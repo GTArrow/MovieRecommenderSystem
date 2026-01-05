@@ -1,5 +1,7 @@
 # Movie Recommender System - Final Report
 
+Live URL: https://movie-recommender-system-iqnm.vercel.app/
+
 ## Team Information
 
 - Member 1: Yixuan Liu (1003238793), [yixuann.liu@mail.utoronto.ca](mailto:yixuann.liu@mail.utoronto.ca)
